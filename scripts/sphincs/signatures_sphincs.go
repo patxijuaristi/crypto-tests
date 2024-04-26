@@ -1,10 +1,9 @@
-package scripts
+package sphincs
 
 import (
+	"crypto/test/common/hexutil"
 	"encoding/hex"
 	"fmt"
-
-	"crypto/test/common/hexutil"
 
 	"github.com/kasperdi/SPHINCSPLUS-golang/parameters"
 	"github.com/kasperdi/SPHINCSPLUS-golang/sphincs"
@@ -16,7 +15,24 @@ var (
 	testsig_sphincs     = hexutil.MustDecode("0x90f27b8b488db00b00606796d2987f6a5f59ae62ea05effe84fef5b8b0e549984a691139ad57a3f0b906637673aa2f63d1f55cb1a69199d4009eea23ceaddc9301")
 	testpubkey_sphincs  = hexutil.MustDecode("0x04e32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a0a2b2667f7e725ceea70c673093bf67663e0312623c8e091b13cf2c0f11ef652")
 	testpubkeyc_sphincs = hexutil.MustDecode("0x02e32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a")
+	params              = parameters.MakeSphincsPlusSHA256256fSimple(false)
 )
+
+func GenerateKeySPHINCS() (*sphincs.SPHINCS_SK, *sphincs.SPHINCS_PK) {
+	return sphincs.Spx_keygen(params)
+}
+
+func GenerateKeySPHINCSWrapper() {
+	_, _ = sphincs.Spx_keygen(params)
+}
+
+func SignSPHINCS(hash []byte, sk *sphincs.SPHINCS_SK) *sphincs.SPHINCS_SIG {
+	return sphincs.Spx_sign(params, hash, sk)
+}
+
+func VerifySignatureSPHINCS(hash []byte, signature *sphincs.SPHINCS_SIG, pk *sphincs.SPHINCS_PK) bool {
+	return sphincs.Spx_verify(params, hash, signature, pk)
+}
 
 // TestSphincs is a function to test SPHINCS+ signature scheme
 func TestSphincs() {

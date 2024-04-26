@@ -1,4 +1,4 @@
-package scripts
+package ecdsa
 
 import (
 	"bytes"
@@ -18,6 +18,46 @@ var (
 	testpubkey  = hexutil.MustDecode("0x04e32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a0a2b2667f7e725ceea70c673093bf67663e0312623c8e091b13cf2c0f11ef652")
 	testpubkeyc = hexutil.MustDecode("0x02e32df42865e97135acfb65f3bae71bdc86f4d49150ad6a440b6f15878109880a")
 )
+
+func GenerateKeyECDSA() (*ecdsa.PrivateKey, error) {
+	return crypto.GenerateKey()
+}
+
+func GenerateKeyECDSAWrapper() {
+	_, _ = crypto.GenerateKey()
+}
+
+func ToECDSA(d []byte) (*ecdsa.PrivateKey, error) {
+	return crypto.ToECDSA(d)
+}
+
+func FromECDSA(priv *ecdsa.PrivateKey) []byte {
+	return crypto.FromECDSA(priv)
+}
+
+func UnmarshalPubkey(pub []byte) (*ecdsa.PublicKey, error) {
+	return crypto.UnmarshalPubkey(pub)
+}
+
+func PubkeyToAddress(p ecdsa.PublicKey) common.Address {
+	return crypto.PubkeyToAddress(p)
+}
+
+func SaveECDSA(file string, key *ecdsa.PrivateKey) error {
+	return crypto.SaveECDSA(file, key)
+}
+
+func LoadECDSA(file string) (*ecdsa.PrivateKey, error) {
+	return crypto.LoadECDSA(file)
+}
+
+func SignECDSA(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
+	return crypto.Sign(hash, prv)
+}
+
+func VerifySignatureECDSA(pubkey, hash, signature []byte) bool {
+	return crypto.VerifySignature(pubkey, hash, signature)
+}
 
 func TestEcrecover() {
 	pubkey, err := crypto.Ecrecover(testmsg, testsig)

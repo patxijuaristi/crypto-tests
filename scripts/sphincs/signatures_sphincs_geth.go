@@ -1,4 +1,4 @@
-package scripts
+package sphincs
 
 import (
 	"crypto/ecdsa"
