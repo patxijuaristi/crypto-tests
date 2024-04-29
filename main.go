@@ -156,11 +156,14 @@ func keySignatureSizes() {
 	printKeySignatureSizes("ECDSA", len(ecdsa.FromECDSA(key)), len(pubkey), len(signature))
 
 	//SPHINCS
-	sk, pk := sphincs.GenerateKeySPHINCS()
-	skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
-	signature2 := sphincs.SignSPHINCS(hash, sk)
-	sigBytes := sphincs.SignatureToBytes(signature2)
-	printKeySignatureSizes("SPHINCA", len(skBytes), len(pkBytes), len(sigBytes))
+	for i := 0; i < 4; i++ {
+		sk, pk := sphincs.GenerateKeySPHINCS()
+		skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
+		signature2 := sphincs.SignSPHINCS(hash, sk)
+		sigBytes := sphincs.SignatureToBytes(signature2)
+		printKeySignatureSizes(sphincs.GetCurrentSphincsMode(), len(skBytes), len(pkBytes), len(sigBytes))
+		sphincs.ChangeSphincsMode()
+	}
 
 	//DILITHIUM
 	for i := 0; i < 5; i++ {

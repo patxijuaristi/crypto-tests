@@ -6,7 +6,36 @@ import (
 )
 
 // Define test data for SPHINCS+
-var params = parameters.MakeSphincsPlusSHA256256fSimple(false)
+var params = parameters.MakeSphincsPlusSHA256256fRobust(false)
+var modeSphincs = "SPHINCS+ SHA256 256bit - Robust"
+var nParams = 0
+
+func GetCurrentSphincsMode() string {
+	return modeSphincs
+}
+
+func ChangeSphincsMode() {
+	if nParams == 4 {
+		nParams = 0
+	} else {
+		nParams++
+	}
+
+	switch nParams {
+	case 0:
+		params = parameters.MakeSphincsPlusSHA256256fRobust(false)
+		modeSphincs = "SPHINCS+ SHA256 256bit - Robust"
+	case 1:
+		params = parameters.MakeSphincsPlusSHA256256fSimple(false)
+		modeSphincs = "SPHINCS+ SHA256 256bit - Simple"
+	case 2:
+		params = parameters.MakeSphincsPlusSHA256128fRobust(false)
+		modeSphincs = "SPHINCS+ SHA256 128bit - Robust"
+	case 3:
+		params = parameters.MakeSphincsPlusSHA256128fSimple(false)
+		modeSphincs = "SPHINCS+ SHA256 128bit - Simple"
+	}
+}
 
 func GenerateKeySPHINCS() (*sphincs.SPHINCS_SK, *sphincs.SPHINCS_PK) {
 	return sphincs.Spx_keygen(params)
@@ -38,7 +67,7 @@ func KeysToBytes(sk *sphincs.SPHINCS_SK, pk *sphincs.SPHINCS_PK) ([]byte, []byte
 	return sk_as_bytes, pk_as_bytes
 }
 
-func SignatureToBytes(s *sphincs.SPHINCS_SIG) ([]byte) {
+func SignatureToBytes(s *sphincs.SPHINCS_SIG) []byte {
 	var sig_as_bytes []byte
 	sig_as_bytes = s.R
 	for i := range s.SIG_FORS.Forspkauth {
