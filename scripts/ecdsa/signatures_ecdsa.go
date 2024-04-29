@@ -35,6 +35,10 @@ func FromECDSA(priv *ecdsa.PrivateKey) []byte {
 	return crypto.FromECDSA(priv)
 }
 
+func FromECDSAPub(pub *ecdsa.PublicKey) []byte {
+	return crypto.FromECDSAPub(pub)
+}
+
 func UnmarshalPubkey(pub []byte) (*ecdsa.PublicKey, error) {
 	return crypto.UnmarshalPubkey(pub)
 }

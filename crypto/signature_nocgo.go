@@ -98,22 +98,27 @@ func Sign(hash []byte, prv *ecdsa.PrivateKey) ([]byte, error) {
 // The signature should have the 64 byte [R || S] format.
 func VerifySignature(pubkey, hash, signature []byte) bool {
 	if len(signature) != 64 {
+		fmt.Println("Signature length != 64")
 		return false
 	}
 	var r, s btcec.ModNScalar
 	if r.SetByteSlice(signature[:32]) {
+		fmt.Println("Overflow")
 		return false // overflow
 	}
 	if s.SetByteSlice(signature[32:]) {
+		fmt.Println("Overflow 2")
 		return false
 	}
 	sig := btc_ecdsa.NewSignature(&r, &s)
 	key, err := btcec.ParsePubKey(pubkey)
 	if err != nil {
+		fmt.Println("Error parsing")
 		return false
 	}
 	// Reject malleable signatures. libsecp256k1 does this check but btcec doesn't.
 	if s.IsOverHalfOrder() {
+		fmt.Println("Malleable signature")
 		return false
 	}
 	return sig.Verify(hash, key)

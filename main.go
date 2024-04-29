@@ -105,31 +105,30 @@ func generateSignatureTest() {
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
 	wrappedSignECDSA := func() { ecdsa.SignECDSA(generateRandomHash(), key) }
-	measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 100)
+	measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 10)
 	memory_usage()
 
 	// SPHINCS+ algorithm signature generation
 	cpu_profiling()
 	sk, _ := sphincs.GenerateKeySPHINCS()
 	wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(generateRandomHash(), sk) }
-	measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - SPHINCS", 100)
+	measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - SPHINCS", 10)
 	memory_usage()
 }
 
 func verifySignatureTest() {
-	// ECDSA algorithm signature generation
+	// ECDSA algorithm signature verification
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
-	pubkey := ecdsa.FromECDSA(key)
+	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
 	hash := generateRandomHash()
 	signature, _ := ecdsa.SignECDSA(hash, key)
-	fmt.Println(hash)
-	//wrappedSignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
-	//measureExecutionTime(wrappedSignECDSA, "VerifySignature - ECDSA", 1000)
-	fmt.Println(ecdsa.VerifySignatureECDSA(pubkey, hash, signature))
+	signature = signature[:len(signature)-1] // remove recovery id
+	wrappedSignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
+	measureExecutionTime(wrappedSignECDSA, "VerifySignature - ECDSA", 100)
 	memory_usage()
 
-	// SPHINCS+ algorithm signature generation
+	// SPHINCS+ algorithm signature verification
 	cpu_profiling()
 	sk, pk := sphincs.GenerateKeySPHINCS()
 	hash2 := generateRandomHash()
@@ -139,35 +138,8 @@ func verifySignatureTest() {
 	memory_usage()
 }
 
-// ECDSA Cryptography testing
-func ecdsa_test() {
-	fmt.Printf("\n---------------- GETH ECDSA SIGNATURE TESTING ----------------\n\n")
-
-	// Measure execution time for each function
-	measureExecutionTime(ecdsa.TestEcrecover, "TestEcrecover", 100)
-	measureExecutionTime(ecdsa.TestVerifySignature, "TestVerifySignature", 100)
-	measureExecutionTime(ecdsa.TestVerifySignatureMalleable, "TestVerifySignatureMalleable", 100)
-	measureExecutionTime(ecdsa.TestDecompressPubkey, "TestDecompressPubkey", 100)
-	measureExecutionTime(ecdsa.TestCompressPubkey, "TestCompressPubkey", 100)
-	measureExecutionTime(ecdsa.TestPubkeyRandom, "TestPubkeyRandom", 100)
-
-	// Run benchmarks
-	ecdsa.BenchmarkEcrecoverSignature()
-	ecdsa.BenchmarkVerifySignature()
-	ecdsa.BenchmarkDecompressPubkey()
-}
-
-// SPHINCS+ Cryptography testing
-func sphincs_test() {
-	fmt.Printf("\n----------------- SPHINCS+ SIGNATURE TESTING -----------------\n\n")
-
-	// Measure execution time for each function
-	measureExecutionTime(sphincs.TestSphincs, "TestSphincs", 100)
-}
-
 // Generate 32 random bytes
 func generateRandomHash() []byte {
-	// Generate 32 random bytes
 	randomBytes := make([]byte, 32)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
@@ -178,62 +150,4 @@ func generateRandomHash() []byte {
 	hash := sha256.Sum256(randomBytes)
 
 	return hash[:]
-}
-
-func testing() {
-	ecdsa_privatekey, err := ecdsa.GenerateKeyECDSA()
-	if err == nil {
-		fmt.Println(ecdsa_privatekey.PublicKey.X) // The x-coordinate of the public key point on the elliptic curve.
-		fmt.Println(ecdsa_privatekey.PublicKey.Y) // The y-coordinate of the public key point on the elliptic curve.
-		fmt.Println(ecdsa_privatekey.D)           // The private key scalar
-	} else {
-		fmt.Printf("Error")
-	}
-
-	fmt.Printf("\n------------------- BIN KEY ------------------------------\n")
-	bin_key := ecdsa.FromECDSA(ecdsa_privatekey)
-	fmt.Println(bin_key)
-	fmt.Printf("\nBinary key size (bytes): %d\n", len(bin_key))
-
-	fmt.Printf("\n---------------- KEY TO ADDRESS --------------------------\n")
-	address := ecdsa.PubkeyToAddress(ecdsa_privatekey.PublicKey)
-	fmt.Println(address)
-
-	fmt.Printf("\n--------------- SAVE KEY TO FILE ----------------------\n")
-	ecdsa.SaveECDSA("./data/ecdsa-private-key.txt", ecdsa_privatekey)
-
-	fmt.Printf("\n--------------- LOAD KEY FROM FILE --------------------\n")
-	key, err4 := ecdsa.LoadECDSA("./data/ecdsa-private-key.txt")
-	if err4 == nil {
-		fmt.Println(key.PublicKey.X) // The x-coordinate of the public key point on the elliptic curve.
-		fmt.Println(key.PublicKey.Y) // The y-coordinate of the public key point on the elliptic curve.
-		fmt.Println(key.D)           // The private key scalar
-	} else {
-		fmt.Println(err4)
-	}
-
-	fmt.Printf("\n--------------------------------------------------------\n")
-
-	sk, pk := sphincs.GenerateKeySPHINCS()
-	fmt.Printf("\nPrivate key (seed): %x\n", sk.SKseed)
-	fmt.Printf("Private key: (prf) %x\n", sk.SKprf)
-	fmt.Printf("Public key (seed): %x\n", pk.PKseed)
-	fmt.Printf("Public key (root): %x\n", pk.PKroot)
-}
-
-// Function used for testing
-func consumeMemoryAndTime() {
-	// Allocate memory
-	const size = 1024 * 1024 // 1 MB
-	var data []byte
-	for i := 0; i < 10*size; i++ {
-		data = append(data, 'a')
-		_ = data // Discard the result to satisfy static analysis
-	}
-
-	// Simulate processing time
-	time.Sleep(10 * time.Second)
-
-	// Release memory
-	data = nil
 }
