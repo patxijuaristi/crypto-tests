@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"crypto/sha256"
+	"crypto/test/scripts/dilithium"
 	"crypto/test/scripts/ecdsa"
 	"crypto/test/scripts/sphincs"
 	"fmt"
@@ -20,6 +21,8 @@ func main() {
 		fmt.Println("1 - Generate Key")
 		fmt.Println("2 - Generate Signature")
 		fmt.Println("3 - Verify Signature")
+		fmt.Println("4 - Key and Signature Sizes")
+		fmt.Println("5 - Testing")
 		fmt.Println("0 - Exit")
 		fmt.Println("===============================================")
 		fmt.Print("Enter your choice: ")
@@ -35,14 +38,19 @@ func main() {
 			generateSignatureTest()
 		case 3:
 			verifySignatureTest()
+		case 4:
+			keySignatureSizes()
+		case 5:
+			testing()
 		case 0:
 			fmt.Println("Exiting...")
 			return
 		default:
 			fmt.Println("Invalid choice. Please try again.")
+			continue // this should be removed if the following two lines are active
 		}
-		fmt.Print("Press Enter to continue...")
-		fmt.Scanln() // Wait for user to press Enter before clearing the screen
+		//fmt.Print("Press Enter to continue...")
+		//fmt.Scanln() // Wait for user to press Enter before clearing the screen
 	}
 }
 
@@ -117,11 +125,11 @@ func generateSignatureTest() {
 }
 
 func verifySignatureTest() {
+	hash := generateRandomHash()
 	// ECDSA algorithm signature verification
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
 	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
-	hash := generateRandomHash()
 	signature, _ := ecdsa.SignECDSA(hash, key)
 	signature = signature[:len(signature)-1] // remove recovery id
 	wrappedSignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
@@ -131,11 +139,44 @@ func verifySignatureTest() {
 	// SPHINCS+ algorithm signature verification
 	cpu_profiling()
 	sk, pk := sphincs.GenerateKeySPHINCS()
-	hash2 := generateRandomHash()
-	signature2 := sphincs.SignSPHINCS(hash2, sk)
-	wrappedSignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash2, signature2, pk) }
+	signature2 := sphincs.SignSPHINCS(hash, sk)
+	wrappedSignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
 	measureExecutionTime(wrappedSignSPHINCS, "VerifySignature - SPHINCS", 100)
 	memory_usage()
+}
+
+func keySignatureSizes() {
+	hash := generateRandomHash()
+	// ECDSA
+	key, _ := ecdsa.GenerateKeyECDSA()
+	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
+	pubkey = pubkey[:len(pubkey)-1] // remove recovery id
+	signature, _ := ecdsa.SignECDSA(hash, key)
+	signature = signature[:len(signature)-1] // remove recovery id
+	printKeySignatureSizes("ECDSA", len(ecdsa.FromECDSA(key)), len(pubkey), len(signature))
+
+	//SPHINCS
+	sk, pk := sphincs.GenerateKeySPHINCS()
+	skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
+	signature2 := sphincs.SignSPHINCS(hash, sk)
+	sigBytes := sphincs.SignatureToBytes(signature2)
+	printKeySignatureSizes("SPHINCA", len(skBytes), len(pkBytes), len(sigBytes))
+
+	//DILITHIUM
+	for i := 0; i < 5; i++ {
+		mode := dilithium.GetCurrentDilithiumMode()
+		pk, sk, _ := dilithium.GenerateKeyDilithium()
+		printKeySignatureSizes(mode, len(sk.Bytes()), len(pk.Bytes()), len("xxxxxxxxxxxxxx"))
+		dilithium.ChangeDilithiumMode()
+	}
+}
+
+func printKeySignatureSizes(algorithm string, pkBytes int, skBytes int, signatureBytes int) {
+	fmt.Printf("\n** %s", algorithm)
+	fmt.Printf("\n - Private key --> %d", skBytes)
+	fmt.Printf("\n - Public key ---> %d", pkBytes)
+	fmt.Printf("\n - Signature ----> %d", signatureBytes)
+	fmt.Printf("\n")
 }
 
 // Generate 32 random bytes
@@ -150,4 +191,18 @@ func generateRandomHash() []byte {
 	hash := sha256.Sum256(randomBytes)
 
 	return hash[:]
+}
+
+func testing() {
+
+	for i := 0; i < 5; i++ {
+		fmt.Println(dilithium.GetCurrentDilithiumMode())
+		pk, sk, _ := dilithium.GenerateKeyDilithium()
+
+		fmt.Printf("Public key size %d ", len(pk.Bytes()))
+		fmt.Printf("\nPrivate key size %d ", len(sk.Bytes()))
+
+		dilithium.ChangeDilithiumMode()
+		fmt.Printf("\n")
+	}
 }
