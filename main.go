@@ -103,25 +103,50 @@ func generateKeyTest() {
 	memory_usage()
 
 	// SPHINCS+ algorithm key generation
-	cpu_profiling()
-	measureExecutionTime(sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - SPHINCS", 10)
-	memory_usage()
+	for i := 0; i < 4; i++ {
+		cpu_profiling()
+		measureExecutionTime(sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - "+sphincs.GetCurrentSphincsMode(), 10)
+		memory_usage()
+		sphincs.ChangeSphincsMode()
+	}
+
+	// Dilithium algorithm key generation
+	for i := 0; i < 5; i++ {
+		cpu_profiling()
+		measureExecutionTime(dilithium.GenerateKeyDilithiumWrapper, "GenerateKey - "+dilithium.GetCurrentDilithiumMode(), 10)
+		memory_usage()
+		dilithium.ChangeDilithiumMode()
+	}
 }
 
 func generateSignatureTest() {
+	hash := generateRandomHash()
 	// ECDSA algorithm signature generation
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
-	wrappedSignECDSA := func() { ecdsa.SignECDSA(generateRandomHash(), key) }
+	wrappedSignECDSA := func() { ecdsa.SignECDSA(hash, key) }
 	measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 10)
 	memory_usage()
 
 	// SPHINCS+ algorithm signature generation
-	cpu_profiling()
-	sk, _ := sphincs.GenerateKeySPHINCS()
-	wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(generateRandomHash(), sk) }
-	measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - SPHINCS", 10)
-	memory_usage()
+	for i := 0; i < 4; i++ {
+		cpu_profiling()
+		sk, _ := sphincs.GenerateKeySPHINCS()
+		wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(hash, sk) }
+		measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - "+sphincs.GetCurrentSphincsMode(), 10)
+		memory_usage()
+		sphincs.ChangeSphincsMode()
+	}
+
+	// Dilithium algorithm signature generation
+	for i := 0; i < 5; i++ {
+		cpu_profiling()
+		_, sk, _ := dilithium.GenerateKeyDilithium()
+		wrappedSignDilithium := func() { dilithium.SignDilithium(sk, hash) }
+		measureExecutionTime(wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 10)
+		memory_usage()
+		dilithium.ChangeDilithiumMode()
+	}
 }
 
 func verifySignatureTest() {
@@ -132,17 +157,33 @@ func verifySignatureTest() {
 	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
 	signature, _ := ecdsa.SignECDSA(hash, key)
 	signature = signature[:len(signature)-1] // remove recovery id
-	wrappedSignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
-	measureExecutionTime(wrappedSignECDSA, "VerifySignature - ECDSA", 100)
+	wrappedVerifySignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
+	measureExecutionTime(wrappedVerifySignECDSA, "VerifySignature - ECDSA", 100)
 	memory_usage()
 
 	// SPHINCS+ algorithm signature verification
 	cpu_profiling()
-	sk, pk := sphincs.GenerateKeySPHINCS()
-	signature2 := sphincs.SignSPHINCS(hash, sk)
-	wrappedSignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
-	measureExecutionTime(wrappedSignSPHINCS, "VerifySignature - SPHINCS", 100)
+	for i := 0; i < 4; i++ {
+		cpu_profiling()
+		sk, pk := sphincs.GenerateKeySPHINCS()
+		signature2 := sphincs.SignSPHINCS(hash, sk)
+		wrappedVerifySignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
+		measureExecutionTime(wrappedVerifySignSPHINCS, "VerifySignature - "+sphincs.GetCurrentSphincsMode(), 100)
+		memory_usage()
+		sphincs.ChangeSphincsMode()
+	}
 	memory_usage()
+
+	// Dilithium algorithm signature generation
+	for i := 0; i < 5; i++ {
+		cpu_profiling()
+		pk, sk, _ := dilithium.GenerateKeyDilithium()
+		signature3 := dilithium.SignDilithium(sk, hash)
+		wrappedVerifySignDilithium := func() { dilithium.VerifySignatureDilithium(pk, hash, signature3) }
+		measureExecutionTime(wrappedVerifySignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 10)
+		memory_usage()
+		dilithium.ChangeDilithiumMode()
+	}
 }
 
 func keySignatureSizes() {
@@ -169,7 +210,8 @@ func keySignatureSizes() {
 	for i := 0; i < 5; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
 		pk, sk, _ := dilithium.GenerateKeyDilithium()
-		printKeySignatureSizes(mode, len(sk.Bytes()), len(pk.Bytes()), len("xxxxxxxxxxxxxx"))
+		signature3 := dilithium.SignDilithium(sk, hash)
+		printKeySignatureSizes(mode, len(sk.Bytes()), len(pk.Bytes()), len(signature3))
 		dilithium.ChangeDilithiumMode()
 	}
 }
@@ -197,15 +239,5 @@ func generateRandomHash() []byte {
 }
 
 func testing() {
-
-	for i := 0; i < 5; i++ {
-		fmt.Println(dilithium.GetCurrentDilithiumMode())
-		pk, sk, _ := dilithium.GenerateKeyDilithium()
-
-		fmt.Printf("Public key size %d ", len(pk.Bytes()))
-		fmt.Printf("\nPrivate key size %d ", len(sk.Bytes()))
-
-		dilithium.ChangeDilithiumMode()
-		fmt.Printf("\n")
-	}
+	fmt.Printf("Function used for testing during development")
 }

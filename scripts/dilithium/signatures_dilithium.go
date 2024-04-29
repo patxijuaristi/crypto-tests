@@ -27,10 +27,14 @@ func GenerateKeyDilithium() (dilithium.PublicKey, dilithium.PrivateKey, error) {
 	return mode.GenerateKey(nil)
 }
 
-func SignDilithium() bool {
-	return false
+func GenerateKeyDilithiumWrapper() {
+	_, _, _ = mode.GenerateKey(nil)
 }
 
-func VerifySignatureDilithium() bool {
-	return false
+func SignDilithium(sk dilithium.PrivateKey, msg []byte) []byte {
+	return mode.Sign(sk, msg)
+}
+
+func VerifySignatureDilithium(pk dilithium.PublicKey, msg []byte, signature []byte) bool {
+	return mode.Verify(pk, msg, signature)
 }
