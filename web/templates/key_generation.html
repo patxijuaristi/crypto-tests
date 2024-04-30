@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Key Generation{% endblock %}
+{% block content %}
+<div class="container">
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+    <div class="container p-5">
+        <div class="row">
+            <p><span class="table-title">Key generation</span> <span>Average data for 100 iterations</span></p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="table-responsive">
+                <table id="keyTable" class="table">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Algorithm</th>
+                    <th scope="col">Execution time</th>
+                    <th scope="col">Alloc (Kb)</th>
+                    <th scope="col">Num GC</th>
+                    <th scope="col">Sys (Kb)</th>
+                    <th scope="col">Total alloc (Kb)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for item in data %}
+                    <tr>
+                        <td class="text-start">{{ item.algorithm }}</td>
+                        <td>{{ item.execution_time }}</td>
+                        <td>{{ item.alloc_kb }}</td>
+                        <td>{{ item.num_gc }}</td>
+                        <td>{{ item.sys_kb }}</td>
+                        <td>{{ item.total_alloc_kb }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

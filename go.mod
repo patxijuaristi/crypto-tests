@@ -11,6 +11,8 @@ require (
 	golang.org/x/tools v0.20.0
 )
 
+require github.com/gorilla/mux v1.8.1 // indirect
+
 require (
 	github.com/cloudflare/circl v1.3.8
 	golang.org/x/sync v0.7.0 // indirect

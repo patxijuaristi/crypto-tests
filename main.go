@@ -1,243 +1,91 @@
 package main
 
 import (
-	"crypto/rand"
-	"crypto/sha256"
-	"crypto/test/scripts/dilithium"
-	"crypto/test/scripts/ecdsa"
-	"crypto/test/scripts/sphincs"
+	"crypto/test/scripts"
+	"encoding/json"
 	"fmt"
-	"os"
-	"runtime"
-	"runtime/pprof"
-	"time"
+	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
+	// Create a new Gorilla Mux router
+	router := mux.NewRouter()
 
-	var choice int
-	for {
-		fmt.Println("\n======= CRYPTOGRAPHY METHODS COMPARISON =======")
-		fmt.Println("1 - Generate Key")
-		fmt.Println("2 - Generate Signature")
-		fmt.Println("3 - Verify Signature")
-		fmt.Println("4 - Key and Signature Sizes")
-		fmt.Println("5 - Testing")
-		fmt.Println("0 - Exit")
-		fmt.Println("===============================================")
-		fmt.Print("Enter your choice: ")
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			continue
-		}
-		switch choice {
-		case 1:
-			generateKeyTest()
-		case 2:
-			generateSignatureTest()
-		case 3:
-			verifySignatureTest()
-		case 4:
-			keySignatureSizes()
-		case 5:
-			testing()
-		case 0:
-			fmt.Println("Exiting...")
-			return
-		default:
-			fmt.Println("Invalid choice. Please try again.")
-			continue // this should be removed if the following two lines are active
-		}
-		//fmt.Print("Press Enter to continue...")
-		//fmt.Scanln() // Wait for user to press Enter before clearing the screen
-	}
+	// Define your API endpoints
+	router.HandleFunc("/generateKey", generateKeyHandler).Methods("GET")
+	router.HandleFunc("/generateSignature", generateSignatureHandler).Methods("GET")
+	router.HandleFunc("/verifySignature", verifySignatureHandler).Methods("GET")
+	router.HandleFunc("/keySignatureSizes", keySignatureSizesHandler).Methods("GET")
+
+	// Start the HTTP server
+	fmt.Println("Server listening on port 8080...")
+	http.ListenAndServe(":8080", router)
 }
 
-// CPU profiling
-func cpu_profiling() {
-	cpuProfile, err := os.Create("cpu_profile.prof")
+// Handler functions for each endpoint
+
+func generateKeyHandler(w http.ResponseWriter, r *http.Request) {
+	// Generate key test data
+	keyTestData := scripts.GenerateKeyTest()
+
+	// Convert key test data to JSON
+	jsonResponse, err := json.Marshal(keyTestData)
 	if err != nil {
-		fmt.Println("Error creating CPU profile:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer cpuProfile.Close()
-	if err := pprof.StartCPUProfile(cpuProfile); err != nil {
-		fmt.Println("Error starting CPU profile:", err)
+
+	// Set content type and write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
+}
+
+func generateSignatureHandler(w http.ResponseWriter, r *http.Request) {
+	// Generate signature test data
+	signatureTestData := scripts.GenerateSignatureTest()
+
+	// Convert signature test data to JSON
+	jsonResponse, err := json.Marshal(signatureTestData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer pprof.StopCPUProfile()
 
-	// Trigger garbage collection to reset memory usage metrics
-	runtime.GC()
+	// Set content type and write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }
 
-// Memory usage
-func memory_usage() {
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	fmt.Printf(" - Alloc -------> %v KB\n", m.Alloc/1024)
-	fmt.Printf(" - TotalAlloc --> %v KB\n", m.TotalAlloc/1024)
-	fmt.Printf(" - Sys ---------> %v KB\n", m.Sys/1024)
-	fmt.Printf(" - NumGC -------> %v\n", m.NumGC)
-	fmt.Printf("------------------------------------------------\n")
-}
+func verifySignatureHandler(w http.ResponseWriter, r *http.Request) {
+	// Verify signature test data
+	verifySignatureTestData := scripts.VerifySignatureTest()
 
-func measureExecutionTime(fn func(), name string, iterations int) {
-	totalTime := time.Duration(0)
-
-	for i := 0; i < iterations; i++ {
-		start := time.Now()
-		fn()
-		totalTime += time.Since(start)
-	}
-
-	averageTime := totalTime / time.Duration(iterations)
-	fmt.Printf(" - %s execution time (average of %d iterations): %v\n", name, iterations, averageTime)
-}
-
-func generateKeyTest() {
-	// ECDSA algorithm key generation
-	cpu_profiling()
-	measureExecutionTime(ecdsa.GenerateKeyECDSAWrapper, "GenerateKey - ECDSA", 10)
-	memory_usage()
-
-	// SPHINCS+ algorithm key generation
-	for i := 0; i < 4; i++ {
-		cpu_profiling()
-		measureExecutionTime(sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - "+sphincs.GetCurrentSphincsMode(), 10)
-		memory_usage()
-		sphincs.ChangeSphincsMode()
-	}
-
-	// Dilithium algorithm key generation
-	for i := 0; i < 5; i++ {
-		cpu_profiling()
-		measureExecutionTime(dilithium.GenerateKeyDilithiumWrapper, "GenerateKey - "+dilithium.GetCurrentDilithiumMode(), 10)
-		memory_usage()
-		dilithium.ChangeDilithiumMode()
-	}
-}
-
-func generateSignatureTest() {
-	hash := generateRandomHash()
-	// ECDSA algorithm signature generation
-	cpu_profiling()
-	key, _ := ecdsa.GenerateKeyECDSA()
-	wrappedSignECDSA := func() { ecdsa.SignECDSA(hash, key) }
-	measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 10)
-	memory_usage()
-
-	// SPHINCS+ algorithm signature generation
-	for i := 0; i < 4; i++ {
-		cpu_profiling()
-		sk, _ := sphincs.GenerateKeySPHINCS()
-		wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(hash, sk) }
-		measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - "+sphincs.GetCurrentSphincsMode(), 10)
-		memory_usage()
-		sphincs.ChangeSphincsMode()
-	}
-
-	// Dilithium algorithm signature generation
-	for i := 0; i < 5; i++ {
-		cpu_profiling()
-		_, sk, _ := dilithium.GenerateKeyDilithium()
-		wrappedSignDilithium := func() { dilithium.SignDilithium(sk, hash) }
-		measureExecutionTime(wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 10)
-		memory_usage()
-		dilithium.ChangeDilithiumMode()
-	}
-}
-
-func verifySignatureTest() {
-	hash := generateRandomHash()
-	// ECDSA algorithm signature verification
-	cpu_profiling()
-	key, _ := ecdsa.GenerateKeyECDSA()
-	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
-	signature, _ := ecdsa.SignECDSA(hash, key)
-	signature = signature[:len(signature)-1] // remove recovery id
-	wrappedVerifySignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
-	measureExecutionTime(wrappedVerifySignECDSA, "VerifySignature - ECDSA", 100)
-	memory_usage()
-
-	// SPHINCS+ algorithm signature verification
-	cpu_profiling()
-	for i := 0; i < 4; i++ {
-		cpu_profiling()
-		sk, pk := sphincs.GenerateKeySPHINCS()
-		signature2 := sphincs.SignSPHINCS(hash, sk)
-		wrappedVerifySignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
-		measureExecutionTime(wrappedVerifySignSPHINCS, "VerifySignature - "+sphincs.GetCurrentSphincsMode(), 100)
-		memory_usage()
-		sphincs.ChangeSphincsMode()
-	}
-	memory_usage()
-
-	// Dilithium algorithm signature generation
-	for i := 0; i < 5; i++ {
-		cpu_profiling()
-		pk, sk, _ := dilithium.GenerateKeyDilithium()
-		signature3 := dilithium.SignDilithium(sk, hash)
-		wrappedVerifySignDilithium := func() { dilithium.VerifySignatureDilithium(pk, hash, signature3) }
-		measureExecutionTime(wrappedVerifySignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 10)
-		memory_usage()
-		dilithium.ChangeDilithiumMode()
-	}
-}
-
-func keySignatureSizes() {
-	hash := generateRandomHash()
-	// ECDSA
-	key, _ := ecdsa.GenerateKeyECDSA()
-	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
-	pubkey = pubkey[:len(pubkey)-1] // remove recovery id
-	signature, _ := ecdsa.SignECDSA(hash, key)
-	signature = signature[:len(signature)-1] // remove recovery id
-	printKeySignatureSizes("ECDSA", len(ecdsa.FromECDSA(key)), len(pubkey), len(signature))
-
-	//SPHINCS
-	for i := 0; i < 4; i++ {
-		sk, pk := sphincs.GenerateKeySPHINCS()
-		skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
-		signature2 := sphincs.SignSPHINCS(hash, sk)
-		sigBytes := sphincs.SignatureToBytes(signature2)
-		printKeySignatureSizes(sphincs.GetCurrentSphincsMode(), len(skBytes), len(pkBytes), len(sigBytes))
-		sphincs.ChangeSphincsMode()
-	}
-
-	//DILITHIUM
-	for i := 0; i < 5; i++ {
-		mode := dilithium.GetCurrentDilithiumMode()
-		pk, sk, _ := dilithium.GenerateKeyDilithium()
-		signature3 := dilithium.SignDilithium(sk, hash)
-		printKeySignatureSizes(mode, len(sk.Bytes()), len(pk.Bytes()), len(signature3))
-		dilithium.ChangeDilithiumMode()
-	}
-}
-
-func printKeySignatureSizes(algorithm string, pkBytes int, skBytes int, signatureBytes int) {
-	fmt.Printf("\n** %s", algorithm)
-	fmt.Printf("\n - Private key --> %d", skBytes)
-	fmt.Printf("\n - Public key ---> %d", pkBytes)
-	fmt.Printf("\n - Signature ----> %d", signatureBytes)
-	fmt.Printf("\n")
-}
-
-// Generate 32 random bytes
-func generateRandomHash() []byte {
-	randomBytes := make([]byte, 32)
-	_, err := rand.Read(randomBytes)
+	// Convert signature test data to JSON
+	jsonResponse, err := json.Marshal(verifySignatureTestData)
 	if err != nil {
-		return nil
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
-	// Hash the random bytes using SHA-256
-	hash := sha256.Sum256(randomBytes)
-
-	return hash[:]
+	// Set content type and write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }
 
-func testing() {
-	fmt.Printf("Function used for testing during development")
+func keySignatureSizesHandler(w http.ResponseWriter, r *http.Request) {
+	// Keya and signature size test data
+	keySignatureSizesTestData := scripts.KeySignatureSizes()
+
+	// Convert sizes test data to JSON
+	jsonResponse, err := json.Marshal(keySignatureSizesTestData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Set content type and write JSON response
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResponse)
 }
