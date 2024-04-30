@@ -6211,14 +6211,14 @@ td,th {
 }
 .spinner-border {
   display: inline-block;
-  width: 2rem;
-  height: 2rem;
+  width: 10rem;
+  height: 10rem;
   vertical-align: -0.125em;
-  border: 0.25em solid currentColor;
+  border: 1em solid #004cbb;
   border-right-color: transparent;
   border-radius: 50%;
-  -webkit-animation: 0.75s linear infinite spinner-border;
-          animation: 0.75s linear infinite spinner-border;
+  -webkit-animation: 1s linear infinite spinner-border;
+          animation: 1s linear infinite spinner-border;
 }
 
 .spinner-border-sm {
@@ -11764,4 +11764,17 @@ header.masthead .masthead-heading {
   font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-weight: 700;
   line-height: 1.2;
+}
+
+.custom-table thead{
+  background-color: #004cbb;
+  color: #f1f1f1;
+}
+
+.custom-table{
+  border: 2px solid #004cbb;
+}
+
+.hidden{
+  display: none!important;
 }

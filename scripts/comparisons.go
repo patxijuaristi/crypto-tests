@@ -10,6 +10,7 @@ import (
 	"os"
 	"runtime"
 	"runtime/pprof"
+	"sort"
 	"time"
 )
 
@@ -106,6 +107,12 @@ func measureExecutionTime(fn func(), name string, iterations int) string {
 	return averageTime.String()
 }
 
+func sortByAlgorithm(result []map[string]interface{}) {
+	sort.Slice(result, func(i, j int) bool {
+		return result[i]["algorithm"].(string) < result[j]["algorithm"].(string)
+	})
+}
+
 func GenerateKeyTest() []map[string]interface{} {
 	var result []map[string]interface{}
 
@@ -139,6 +146,7 @@ func GenerateKeyTest() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	sortByAlgorithm(result)
 	return result
 }
 
@@ -150,7 +158,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
 	wrappedSignECDSA := func() { ecdsa.SignECDSA(hash, key) }
-	ecdsaTime := measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 10)
+	ecdsaTime := measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 1)
 	ecdsaStats := memory_usage()
 	ecdsaStats["algorithm"] = "ECDSA"
 	ecdsaStats["execution_time"] = ecdsaTime
@@ -162,7 +170,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 		cpu_profiling()
 		sk, _ := sphincs.GenerateKeySPHINCS()
 		wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(hash, sk) }
-		sphincsTime := measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - "+mode, 10)
+		sphincsTime := measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - "+mode, 1)
 		sphincsStats := memory_usage()
 		sphincsStats["algorithm"] = mode
 		sphincsStats["execution_time"] = sphincsTime
@@ -176,7 +184,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 		cpu_profiling()
 		_, sk, _ := dilithium.GenerateKeyDilithium()
 		wrappedSignDilithium := func() { dilithium.SignDilithium(sk, hash) }
-		dilithiumTime := measureExecutionTime(wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 10)
+		dilithiumTime := measureExecutionTime(wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 1)
 		dilithiumStats := memory_usage()
 		dilithiumStats["algorithm"] = mode
 		dilithiumStats["execution_time"] = dilithiumTime
@@ -184,6 +192,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	sortByAlgorithm(result)
 	return result
 }
 
@@ -198,7 +207,7 @@ func VerifySignatureTest() []map[string]interface{} {
 	signature, _ := ecdsa.SignECDSA(hash, key)
 	signature = signature[:len(signature)-1] // remove recovery id
 	wrappedVerifySignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
-	ecdsaTime := measureExecutionTime(wrappedVerifySignECDSA, "VerifySignature - ECDSA", 100)
+	ecdsaTime := measureExecutionTime(wrappedVerifySignECDSA, "VerifySignature - ECDSA", 10)
 	ecdsaStats := memory_usage()
 	ecdsaStats["algorithm"] = "ECDSA"
 	ecdsaStats["execution_time"] = ecdsaTime
@@ -211,7 +220,7 @@ func VerifySignatureTest() []map[string]interface{} {
 		sk, pk := sphincs.GenerateKeySPHINCS()
 		signature2 := sphincs.SignSPHINCS(hash, sk)
 		wrappedVerifySignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
-		sphincsTime := measureExecutionTime(wrappedVerifySignSPHINCS, "VerifySignature - "+mode, 100)
+		sphincsTime := measureExecutionTime(wrappedVerifySignSPHINCS, "VerifySignature - "+mode, 10)
 		sphincsStats := memory_usage()
 		sphincsStats["algorithm"] = mode
 		sphincsStats["execution_time"] = sphincsTime
@@ -234,6 +243,7 @@ func VerifySignatureTest() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	sortByAlgorithm(result)
 	return result
 }
 
@@ -275,6 +285,7 @@ func KeySignatureSizes() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	sortByAlgorithm(result)
 	return result
 }
 
