@@ -11778,3 +11778,7 @@ header.masthead .masthead-heading {
 .hidden{
   display: none!important;
 }
+
+.home-container .btn-info{
+  border: 2px solid white;
+}

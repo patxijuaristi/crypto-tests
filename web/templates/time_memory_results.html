@@ -3,16 +3,7 @@
 {% block content %}
 <div class="container">
     <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
-    <div id="loading-spinner" class="container p-5 d-flex justify-content-center hidden">
-        <div class="row">
-            <div class="col-12 d-flex justify-content-center">
-                <div class="spinner-border" role="status"></div>
-            </div>
-            <div class="col-12 d-flex justify-content-center">
-                <h6 class="mt-3">Testing methods...</h6>
-            </div>
-        </div>
-    </div>
+    {% include 'loading_spinner.html' %}
     <div id="page-content" class="container p-5">
         <div class="row">
             <p><span class="table-title">{{data.page_title}}</span> <span>Average data for 100 iterations</span></p>

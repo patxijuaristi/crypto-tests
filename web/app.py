@@ -17,7 +17,7 @@ def generate_key():
         # Parse the JSON response
         test_result = response.json()
         data = {
-            'page_title' : 'Key generation',
+            'page_title' : '🔑 Key generation',
             'test_result' : test_result
         }
         # Render the template with JSON data
@@ -35,7 +35,7 @@ def generate_signature():
         # Parse the JSON response
         test_result = response.json()
         data = {
-            'page_title' : 'Signature generation',
+            'page_title' : '✍ Signature generation',
             'test_result' : test_result
         }
         # Render the template with JSON data
@@ -53,7 +53,7 @@ def signature_verification():
         # Parse the JSON response
         test_result = response.json()
         data = {
-            'page_title' : 'Signature verification',
+            'page_title' : '📝 Signature verification',
             'test_result' : test_result
         }
         # Render the template with JSON data
@@ -71,7 +71,7 @@ def signature_key_sizes():
         # Parse the JSON response
         test_result = response.json()
         data = {
-            'page_title' : 'Key and Signature sizes',
+            'page_title' : '📊 Key and Signature sizes',
             'test_result' : test_result
         }
         # Render the template with JSON data
