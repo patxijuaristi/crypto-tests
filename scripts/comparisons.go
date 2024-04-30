@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"crypto/test/scripts/dilithium"
 	"crypto/test/scripts/ecdsa"
+	"crypto/test/scripts/falcon"
 	"crypto/test/scripts/sphincs"
 	"fmt"
 	"os"
@@ -319,5 +320,5 @@ func generateRandomHash() []byte {
 }
 
 func Testing() {
-	fmt.Printf("Function used for testing during development")
+	falcon.Falcon_test()
 }
