@@ -3,7 +3,10 @@ package main
 import (
 	"crypto/test/scripts"
 	"encoding/json"
+	"fmt"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func test() {
@@ -11,8 +14,7 @@ func test() {
 }
 
 func main() {
-	test()
-	/*// Create a new Gorilla Mux router
+	// Create a new Gorilla Mux router
 	router := mux.NewRouter()
 
 	// Define your API endpoints
@@ -23,7 +25,7 @@ func main() {
 
 	// Start the HTTP server
 	fmt.Println("Server listening on port 8080...")
-	http.ListenAndServe(":8080", router)*/
+	http.ListenAndServe(":8080", router)
 }
 
 // Handler functions for each endpoint

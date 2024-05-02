@@ -147,6 +147,16 @@ func GenerateKeyTest() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	// Falcon algorithm key generation
+	seed := make([]byte, 64)
+	cpu_profiling()
+	wrappedFalconGenKey := func() { falcon.GenerateKey(seed) }
+	falconTime := measureExecutionTime(wrappedFalconGenKey, "GenerateKey - Falcon 1024", 10)
+	falconStats := memory_usage()
+	falconStats["algorithm"] = "Falcon 1024"
+	falconStats["execution_time"] = falconTime
+	result = append(result, falconStats)
+
 	sortByAlgorithm(result)
 	return result
 }
@@ -192,6 +202,17 @@ func GenerateSignatureTest() []map[string]interface{} {
 		result = append(result, dilithiumStats)
 		dilithium.ChangeDilithiumMode()
 	}
+
+	// Falcon algorithm signature generation
+	seed := make([]byte, 64)
+	cpu_profiling()
+	_, sk, _ := falcon.GenerateKey(seed)
+	wrappedSignFalcon := func() { sk.SignCompressed(hash) }
+	falconTime := measureExecutionTime(wrappedSignFalcon, "GenerateSignature - Falcon 1024", 1)
+	falconStats := memory_usage()
+	falconStats["algorithm"] = "Falcon 1024"
+	falconStats["execution_time"] = falconTime
+	result = append(result, falconStats)
 
 	sortByAlgorithm(result)
 	return result
@@ -244,6 +265,18 @@ func VerifySignatureTest() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	// Falcon algorithm signature verification
+	seed := make([]byte, 64)
+	cpu_profiling()
+	pk, sk, _ := falcon.GenerateKey(seed)
+	signatureFalcon, _ := sk.SignCompressed(hash)
+	wrappedVerifySignFalcon := func() { pk.Verify(signatureFalcon, hash) }
+	falconTime := measureExecutionTime(wrappedVerifySignFalcon, "VerifySignature - Falcon 1024", 10)
+	falconStats := memory_usage()
+	falconStats["algorithm"] = "Falcon 1024"
+	falconStats["execution_time"] = falconTime
+	result = append(result, falconStats)
+
 	sortByAlgorithm(result)
 	return result
 }
@@ -286,6 +319,20 @@ func KeySignatureSizes() []map[string]interface{} {
 		dilithium.ChangeDilithiumMode()
 	}
 
+	// Falcon 1024
+	seed := make([]byte, 64)
+	pk, sk, _ := falcon.GenerateKey(seed)
+	signatureFalcon, _ := sk.SignCompressed(hash)
+	ctSignatureFalcon, _ := signatureFalcon.ConvertToCT()
+
+	falconStats := getKeySignatureSizes("Falcon 1024", len(sk), len(pk), len(signature))
+	falconStats["algorithm"] = "Falcon 1024"
+	result = append(result, falconStats)
+
+	falconCTStats := getKeySignatureSizes("Falcon 1024 (CT-format)", len(sk), len(pk), len(ctSignatureFalcon))
+	falconCTStats["algorithm"] = "Falcon 1024 (CT-format)"
+	result = append(result, falconCTStats)
+
 	sortByAlgorithm(result)
 	return result
 }
@@ -320,5 +367,5 @@ func generateRandomHash() []byte {
 }
 
 func Testing() {
-	falcon.Falcon_test()
+	fmt.Println("Testing")
 }
