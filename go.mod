@@ -7,11 +7,11 @@ require (
 	github.com/google/gofuzz v1.2.0
 	golang.org/x/crypto v0.22.0
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
-	golang.org/x/sys v0.19.0
+	golang.org/x/sys v0.20.0
 	golang.org/x/tools v0.20.0
 )
 
-require github.com/gorilla/mux v1.8.1 // indirect
+require github.com/gorilla/mux v1.8.1
 
 require (
 	github.com/cloudflare/circl v1.3.8

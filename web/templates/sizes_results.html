@@ -21,7 +21,7 @@
                 </thead>
                 <tbody>
                     {% for item in data.test_result %}
-                    <tr>
+                    <tr style="background-color:{{item.bg_color}};">
                         <td class="text-start">{{ item.algorithm }}</td>
                         <td>{{ item.private_key }}</td>
                         <td>{{ item.public_key }}</td>

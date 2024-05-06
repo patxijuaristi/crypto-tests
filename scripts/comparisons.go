@@ -324,11 +324,9 @@ func KeySignatureSizes() []map[string]interface{} {
 	pk, sk, _ := falcon.GenerateKey(seed)
 	signatureFalcon, _ := sk.SignCompressed(hash)
 	ctSignatureFalcon, _ := signatureFalcon.ConvertToCT()
-
 	falconStats := getKeySignatureSizes("Falcon 1024", len(sk), len(pk), len(signature))
 	falconStats["algorithm"] = "Falcon 1024"
 	result = append(result, falconStats)
-
 	falconCTStats := getKeySignatureSizes("Falcon 1024 (CT-format)", len(sk), len(pk), len(ctSignatureFalcon))
 	falconCTStats["algorithm"] = "Falcon 1024 (CT-format)"
 	result = append(result, falconCTStats)
@@ -367,5 +365,5 @@ func generateRandomHash() []byte {
 }
 
 func Testing() {
-	fmt.Println("Testing")
+	fmt.Printf("\n========================\n")
 }

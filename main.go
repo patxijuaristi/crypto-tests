@@ -9,10 +9,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func test() {
-	scripts.Testing()
-}
-
 func main() {
 	// Create a new Gorilla Mux router
 	router := mux.NewRouter()
@@ -92,4 +88,8 @@ func keySignatureSizesHandler(w http.ResponseWriter, r *http.Request) {
 	// Set content type and write JSON response
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(jsonResponse)
+}
+
+func test() {
+	scripts.Testing()
 }
