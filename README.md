@@ -7,3 +7,5 @@ Used algorithms:
 
 - ECDSA (Default algorihtm used in Geth)
 - SPHINCS+
+- Crystals Dilithium
+- Falcon

@@ -15,7 +15,7 @@ func GetCurrentSphincsMode() string {
 }
 
 func ChangeSphincsMode() {
-	if nParams == 4 {
+	if nParams == 6 {
 		nParams = 0
 	} else {
 		nParams++
@@ -29,9 +29,15 @@ func ChangeSphincsMode() {
 		params = parameters.MakeSphincsPlusSHA256256fSimple(false)
 		modeSphincs = "SPHINCS+ SHA256 256bit - Simple"
 	case 2:
+		params = parameters.MakeSphincsPlusSHA256192fRobust(false)
+		modeSphincs = "SPHINCS+ SHA256 192bit - Robust"
+	case 3:
+		params = parameters.MakeSphincsPlusSHA256192fSimple(false)
+		modeSphincs = "SPHINCS+ SHA256 192bit - Simple"
+	case 4:
 		params = parameters.MakeSphincsPlusSHA256128fRobust(false)
 		modeSphincs = "SPHINCS+ SHA256 128bit - Robust"
-	case 3:
+	case 5:
 		params = parameters.MakeSphincsPlusSHA256128fSimple(false)
 		modeSphincs = "SPHINCS+ SHA256 128bit - Simple"
 	}

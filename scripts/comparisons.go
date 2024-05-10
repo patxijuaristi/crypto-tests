@@ -15,6 +15,11 @@ import (
 	"time"
 )
 
+const (
+	nSphincs   = 6
+	nDilithium = 5
+)
+
 func main_console() {
 
 	var choice int
@@ -126,7 +131,7 @@ func GenerateKeyTest() []map[string]interface{} {
 	result = append(result, ecdsaStats)
 
 	// SPHINCS+ algorithm key generation
-	for i := 0; i < 4; i++ {
+	for i := 0; i < nSphincs; i++ {
 		mode := sphincs.GetCurrentSphincsMode()
 		sphincsTime := measureExecutionTime(sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - "+mode, 10)
 		sphincsStats := memory_usage()
@@ -137,7 +142,7 @@ func GenerateKeyTest() []map[string]interface{} {
 	}
 
 	// Dilithium algorithm key generation
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nDilithium; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
 		dilithiumTime := measureExecutionTime(dilithium.GenerateKeyDilithiumWrapper, "GenerateKey - "+mode, 10)
 		dilithiumStats := memory_usage()
@@ -176,7 +181,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 	result = append(result, ecdsaStats)
 
 	// SPHINCS+ algorithm signature generation
-	for i := 0; i < 4; i++ {
+	for i := 0; i < nSphincs; i++ {
 		mode := sphincs.GetCurrentSphincsMode()
 		cpu_profiling()
 		sk, _ := sphincs.GenerateKeySPHINCS()
@@ -190,7 +195,7 @@ func GenerateSignatureTest() []map[string]interface{} {
 	}
 
 	// Dilithium algorithm signature generation
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nDilithium; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
 		cpu_profiling()
 		_, sk, _ := dilithium.GenerateKeyDilithium()
@@ -236,7 +241,7 @@ func VerifySignatureTest() []map[string]interface{} {
 	result = append(result, ecdsaStats)
 
 	// SPHINCS+ algorithm signature verification
-	for i := 0; i < 4; i++ {
+	for i := 0; i < nSphincs; i++ {
 		mode := sphincs.GetCurrentSphincsMode()
 		cpu_profiling()
 		sk, pk := sphincs.GenerateKeySPHINCS()
@@ -251,7 +256,7 @@ func VerifySignatureTest() []map[string]interface{} {
 	}
 
 	// Dilithium algorithm signature generation
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nDilithium; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
 		cpu_profiling()
 		pk, sk, _ := dilithium.GenerateKeyDilithium()
@@ -296,7 +301,7 @@ func KeySignatureSizes() []map[string]interface{} {
 	result = append(result, ecdsaStats)
 
 	//SPHINCS
-	for i := 0; i < 4; i++ {
+	for i := 0; i < nSphincs; i++ {
 		mode := sphincs.GetCurrentSphincsMode()
 		sk, pk := sphincs.GenerateKeySPHINCS()
 		skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
@@ -309,7 +314,7 @@ func KeySignatureSizes() []map[string]interface{} {
 	}
 
 	//DILITHIUM
-	for i := 0; i < 5; i++ {
+	for i := 0; i < nDilithium; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
 		pk, sk, _ := dilithium.GenerateKeyDilithium()
 		signature3 := dilithium.SignDilithium(sk, hash)
