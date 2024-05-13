@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/test/scripts"
 	"encoding/json"
 	"fmt"
@@ -33,56 +32,33 @@ func generateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate key test data
 	keyTestData := scripts.GenerateKeyTest()
 
-	// Convert key test data to JSON
-	jsonResponse, err := json.Marshal(keyTestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Set content type and write JSON response
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResponse)
+	returnData(w, r, keyTestData)
 }
 
 func generateSignatureHandler(w http.ResponseWriter, r *http.Request) {
 	// Generate signature test data
-	signatureTestData := scripts.GenerateSignatureTest()
+	signatureTestData := scripts.GenerateSignatureTest(nil)
 
-	// Convert signature test data to JSON
-	jsonResponse, err := json.Marshal(signatureTestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Set content type and write JSON response
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResponse)
+	returnData(w, r, signatureTestData)
 }
 
 func verifySignatureHandler(w http.ResponseWriter, r *http.Request) {
 	// Verify signature test data
-	verifySignatureTestData := scripts.VerifySignatureTest()
+	verifySignatureTestData := scripts.VerifySignatureTest(nil)
 
-	// Convert signature test data to JSON
-	jsonResponse, err := json.Marshal(verifySignatureTestData)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Set content type and write JSON response
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(jsonResponse)
+	returnData(w, r, verifySignatureTestData)
 }
 
 func keySignatureSizesHandler(w http.ResponseWriter, r *http.Request) {
 	// Keya and signature size test data
-	keySignatureSizesTestData := scripts.KeySignatureSizes()
+	keySignatureSizesTestData := scripts.KeySignatureSizes(nil)
 
-	// Convert sizes test data to JSON
-	jsonResponse, err := json.Marshal(keySignatureSizesTestData)
+	returnData(w, r, keySignatureSizesTestData)
+}
+
+func returnData(w http.ResponseWriter, r *http.Request, data []map[string]interface{}) {
+	// Convert signature test data to JSON
+	jsonResponse, err := json.Marshal(data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -94,12 +70,6 @@ func keySignatureSizesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func testApi(w http.ResponseWriter, r *http.Request) {
-	// Only allow POST requests
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Read request body
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -122,26 +92,32 @@ func testApi(w http.ResponseWriter, r *http.Request) {
 	hash := requestData.Hash
 	functionName := requestData.FunctionName
 
-	fmt.Println("Entrado al endpoint")
+	fmt.Println("----------------------------")
+	perform_tests(hash, functionName)
+	fmt.Println("----------------------------")
+}
 
-	fmt.Println(hash)
-	fmt.Println(functionName)
+func perform_tests(hash []byte, functionName string) {
+	fmt.Println("Performing tests", functionName)
 
-	// Respond with a success message
-	response := map[string]string{"message": "Success"}
-	jsonResponse, err := json.Marshal(response)
-	if err != nil {
-		http.Error(w, "Failed to marshal response", http.StatusInternalServerError)
-		return
+	if functionName == "BlockValidator" {
+		fmt.Println("** GENERATE SIGNATURE TEST **")
+		scripts.GenerateSignatureTest(hash)
+		fmt.Println("** VERIFY SIGNATURE TEST **")
+		scripts.VerifySignatureTest(hash)
 	}
 
-	// Set Content-Type header and send response
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if _, err := io.Copy(w, bytes.NewReader(jsonResponse)); err != nil {
-		http.Error(w, "Failed to write response", http.StatusInternalServerError)
-		return
-	}
+	// This is how it should be
+	/*
+		switch functionName {
+		case "Signature":
+			scripts.GenerateSignatureTest(hash)
+		case "VerifySignature", "BlockValidator":
+			scripts.VerifySignatureTest(hash)
+		default: //Generate key
+			scripts.GenerateKeyTest()
+		}
+	*/
 }
 
 func test() {

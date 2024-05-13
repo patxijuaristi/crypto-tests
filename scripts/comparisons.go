@@ -16,50 +16,11 @@ import (
 )
 
 const (
-	nSphincs   = 6
-	nDilithium = 5
+	nSphincs     = 6
+	nDilithium   = 5
+	printResults = false
+	nIterations  = 20
 )
-
-func main_console() {
-
-	var choice int
-	for {
-		fmt.Println("\n======= CRYPTOGRAPHY METHODS COMPARISON =======")
-		fmt.Println("1 - Generate Key")
-		fmt.Println("2 - Generate Signature")
-		fmt.Println("3 - Verify Signature")
-		fmt.Println("4 - Key and Signature Sizes")
-		fmt.Println("5 - Testing")
-		fmt.Println("0 - Exit")
-		fmt.Println("===============================================")
-		fmt.Print("Enter your choice: ")
-		_, err := fmt.Scanln(&choice)
-		if err != nil {
-			fmt.Println("Error reading input:", err)
-			continue
-		}
-		switch choice {
-		case 1:
-			GenerateKeyTest()
-		case 2:
-			GenerateSignatureTest()
-		case 3:
-			VerifySignatureTest()
-		case 4:
-			KeySignatureSizes()
-		case 5:
-			Testing()
-		case 0:
-			fmt.Println("Exiting...")
-			return
-		default:
-			fmt.Println("Invalid choice. Please try again.")
-			continue // this should be removed if the following two lines are active
-		}
-		//fmt.Print("Press Enter to continue...")
-		//fmt.Scanln() // Wait for user to press Enter before clearing the screen
-	}
-}
 
 // CPU profiling
 func cpu_profiling() {
@@ -80,14 +41,16 @@ func cpu_profiling() {
 }
 
 // Memory usage
-func memory_usage() map[string]interface{} {
+func memory_usage(print bool) map[string]interface{} {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	fmt.Printf(" - Alloc -------> %v KB\n", m.Alloc/1024)
-	fmt.Printf(" - TotalAlloc --> %v KB\n", m.TotalAlloc/1024)
-	fmt.Printf(" - Sys ---------> %v KB\n", m.Sys/1024)
-	fmt.Printf(" - NumGC -------> %v\n", m.NumGC)
-	fmt.Printf("------------------------------------------------\n")
+	if print {
+		fmt.Printf(" - Alloc -------> %v KB\n", m.Alloc/1024)
+		fmt.Printf(" - TotalAlloc --> %v KB\n", m.TotalAlloc/1024)
+		fmt.Printf(" - Sys ---------> %v KB\n", m.Sys/1024)
+		fmt.Printf(" - NumGC -------> %v\n", m.NumGC)
+		fmt.Printf("------------------------------------------------\n")
+	}
 
 	memStats := map[string]interface{}{
 		"alloc_kb":       m.Alloc / 1024,
@@ -98,7 +61,7 @@ func memory_usage() map[string]interface{} {
 	return memStats
 }
 
-func measureExecutionTime(fn func(), name string, iterations int) string {
+func measureExecutionTime(print bool, fn func(), name string, iterations int) string {
 	totalTime := time.Duration(0)
 
 	for i := 0; i < iterations; i++ {
@@ -108,7 +71,9 @@ func measureExecutionTime(fn func(), name string, iterations int) string {
 	}
 
 	averageTime := totalTime / time.Duration(iterations)
-	fmt.Printf(" - %s execution time (average of %d iterations): %v\n", name, iterations, averageTime)
+	if print {
+		fmt.Printf(" - %s execution time (average of %d iterations): %v\n", name, iterations, averageTime)
+	}
 
 	return averageTime.String()
 }
@@ -124,8 +89,8 @@ func GenerateKeyTest() []map[string]interface{} {
 
 	// ECDSA algorithm key generation
 	cpu_profiling()
-	ecdsaTime := measureExecutionTime(ecdsa.GenerateKeyECDSAWrapper, "GenerateKey - ECDSA", 10)
-	ecdsaStats := memory_usage()
+	ecdsaTime := measureExecutionTime(printResults, ecdsa.GenerateKeyECDSAWrapper, "GenerateKey - ECDSA", nIterations)
+	ecdsaStats := memory_usage(printResults)
 	ecdsaStats["algorithm"] = "ECDSA"
 	ecdsaStats["execution_time"] = ecdsaTime
 	result = append(result, ecdsaStats)
@@ -133,8 +98,8 @@ func GenerateKeyTest() []map[string]interface{} {
 	// SPHINCS+ algorithm key generation
 	for i := 0; i < nSphincs; i++ {
 		mode := sphincs.GetCurrentSphincsMode()
-		sphincsTime := measureExecutionTime(sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - "+mode, 10)
-		sphincsStats := memory_usage()
+		sphincsTime := measureExecutionTime(printResults, sphincs.GenerateKeySPHINCSWrapper, "GenerateKey - "+mode, nIterations)
+		sphincsStats := memory_usage(printResults)
 		sphincsStats["algorithm"] = mode
 		sphincsStats["execution_time"] = sphincsTime
 		result = append(result, sphincsStats)
@@ -144,8 +109,8 @@ func GenerateKeyTest() []map[string]interface{} {
 	// Dilithium algorithm key generation
 	for i := 0; i < nDilithium; i++ {
 		mode := dilithium.GetCurrentDilithiumMode()
-		dilithiumTime := measureExecutionTime(dilithium.GenerateKeyDilithiumWrapper, "GenerateKey - "+mode, 10)
-		dilithiumStats := memory_usage()
+		dilithiumTime := measureExecutionTime(printResults, dilithium.GenerateKeyDilithiumWrapper, "GenerateKey - "+mode, nIterations)
+		dilithiumStats := memory_usage(printResults)
 		dilithiumStats["algorithm"] = mode
 		dilithiumStats["execution_time"] = dilithiumTime
 		result = append(result, dilithiumStats)
@@ -156,8 +121,8 @@ func GenerateKeyTest() []map[string]interface{} {
 	seed := make([]byte, 64)
 	cpu_profiling()
 	wrappedFalconGenKey := func() { falcon.GenerateKey(seed) }
-	falconTime := measureExecutionTime(wrappedFalconGenKey, "GenerateKey - Falcon 1024", 10)
-	falconStats := memory_usage()
+	falconTime := measureExecutionTime(printResults, wrappedFalconGenKey, "GenerateKey - Falcon 1024", nIterations)
+	falconStats := memory_usage(printResults)
 	falconStats["algorithm"] = "Falcon 1024"
 	falconStats["execution_time"] = falconTime
 	result = append(result, falconStats)
@@ -166,16 +131,16 @@ func GenerateKeyTest() []map[string]interface{} {
 	return result
 }
 
-func GenerateSignatureTest() []map[string]interface{} {
+func GenerateSignatureTest(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	hash := generateRandomHash()
+	//hash := generateRandomHash()
 	// ECDSA algorithm signature generation
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
 	wrappedSignECDSA := func() { ecdsa.SignECDSA(hash, key) }
-	ecdsaTime := measureExecutionTime(wrappedSignECDSA, "GenerateSignature - ECDSA", 1)
-	ecdsaStats := memory_usage()
+	ecdsaTime := measureExecutionTime(printResults, wrappedSignECDSA, "GenerateSignature - ECDSA", nIterations)
+	ecdsaStats := memory_usage(printResults)
 	ecdsaStats["algorithm"] = "ECDSA"
 	ecdsaStats["execution_time"] = ecdsaTime
 	result = append(result, ecdsaStats)
@@ -186,8 +151,8 @@ func GenerateSignatureTest() []map[string]interface{} {
 		cpu_profiling()
 		sk, _ := sphincs.GenerateKeySPHINCS()
 		wrappedSignSPHINCS := func() { sphincs.SignSPHINCS(hash, sk) }
-		sphincsTime := measureExecutionTime(wrappedSignSPHINCS, "GenerateSignature - "+mode, 1)
-		sphincsStats := memory_usage()
+		sphincsTime := measureExecutionTime(printResults, wrappedSignSPHINCS, "GenerateSignature - "+mode, nIterations)
+		sphincsStats := memory_usage(printResults)
 		sphincsStats["algorithm"] = mode
 		sphincsStats["execution_time"] = sphincsTime
 		result = append(result, sphincsStats)
@@ -200,8 +165,8 @@ func GenerateSignatureTest() []map[string]interface{} {
 		cpu_profiling()
 		_, sk, _ := dilithium.GenerateKeyDilithium()
 		wrappedSignDilithium := func() { dilithium.SignDilithium(sk, hash) }
-		dilithiumTime := measureExecutionTime(wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), 1)
-		dilithiumStats := memory_usage()
+		dilithiumTime := measureExecutionTime(printResults, wrappedSignDilithium, "GenerateSignature - "+dilithium.GetCurrentDilithiumMode(), nIterations)
+		dilithiumStats := memory_usage(printResults)
 		dilithiumStats["algorithm"] = mode
 		dilithiumStats["execution_time"] = dilithiumTime
 		result = append(result, dilithiumStats)
@@ -213,8 +178,8 @@ func GenerateSignatureTest() []map[string]interface{} {
 	cpu_profiling()
 	_, sk, _ := falcon.GenerateKey(seed)
 	wrappedSignFalcon := func() { sk.SignCompressed(hash) }
-	falconTime := measureExecutionTime(wrappedSignFalcon, "GenerateSignature - Falcon 1024", 1)
-	falconStats := memory_usage()
+	falconTime := measureExecutionTime(printResults, wrappedSignFalcon, "GenerateSignature - Falcon 1024", nIterations)
+	falconStats := memory_usage(printResults)
 	falconStats["algorithm"] = "Falcon 1024"
 	falconStats["execution_time"] = falconTime
 	result = append(result, falconStats)
@@ -223,10 +188,10 @@ func GenerateSignatureTest() []map[string]interface{} {
 	return result
 }
 
-func VerifySignatureTest() []map[string]interface{} {
+func VerifySignatureTest(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	hash := generateRandomHash()
+	//hash := generateRandomHash()
 	// ECDSA algorithm signature verification
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
@@ -234,8 +199,8 @@ func VerifySignatureTest() []map[string]interface{} {
 	signature, _ := ecdsa.SignECDSA(hash, key)
 	signature = signature[:len(signature)-1] // remove recovery id
 	wrappedVerifySignECDSA := func() { ecdsa.VerifySignatureECDSA(pubkey, hash, signature) }
-	ecdsaTime := measureExecutionTime(wrappedVerifySignECDSA, "VerifySignature - ECDSA", 10)
-	ecdsaStats := memory_usage()
+	ecdsaTime := measureExecutionTime(printResults, wrappedVerifySignECDSA, "VerifySignature - ECDSA", nIterations)
+	ecdsaStats := memory_usage(printResults)
 	ecdsaStats["algorithm"] = "ECDSA"
 	ecdsaStats["execution_time"] = ecdsaTime
 	result = append(result, ecdsaStats)
@@ -247,8 +212,8 @@ func VerifySignatureTest() []map[string]interface{} {
 		sk, pk := sphincs.GenerateKeySPHINCS()
 		signature2 := sphincs.SignSPHINCS(hash, sk)
 		wrappedVerifySignSPHINCS := func() { sphincs.VerifySignatureSPHINCS(hash, signature2, pk) }
-		sphincsTime := measureExecutionTime(wrappedVerifySignSPHINCS, "VerifySignature - "+mode, 10)
-		sphincsStats := memory_usage()
+		sphincsTime := measureExecutionTime(printResults, wrappedVerifySignSPHINCS, "VerifySignature - "+mode, nIterations)
+		sphincsStats := memory_usage(printResults)
 		sphincsStats["algorithm"] = mode
 		sphincsStats["execution_time"] = sphincsTime
 		result = append(result, sphincsStats)
@@ -262,8 +227,8 @@ func VerifySignatureTest() []map[string]interface{} {
 		pk, sk, _ := dilithium.GenerateKeyDilithium()
 		signature3 := dilithium.SignDilithium(sk, hash)
 		wrappedVerifySignDilithium := func() { dilithium.VerifySignatureDilithium(pk, hash, signature3) }
-		dilithiumTime := measureExecutionTime(wrappedVerifySignDilithium, "GenerateSignature - "+mode, 10)
-		dilithiumStats := memory_usage()
+		dilithiumTime := measureExecutionTime(printResults, wrappedVerifySignDilithium, "GenerateSignature - "+mode, nIterations)
+		dilithiumStats := memory_usage(printResults)
 		dilithiumStats["algorithm"] = mode
 		dilithiumStats["execution_time"] = dilithiumTime
 		result = append(result, dilithiumStats)
@@ -276,8 +241,8 @@ func VerifySignatureTest() []map[string]interface{} {
 	pk, sk, _ := falcon.GenerateKey(seed)
 	signatureFalcon, _ := sk.SignCompressed(hash)
 	wrappedVerifySignFalcon := func() { pk.Verify(signatureFalcon, hash) }
-	falconTime := measureExecutionTime(wrappedVerifySignFalcon, "VerifySignature - Falcon 1024", 10)
-	falconStats := memory_usage()
+	falconTime := measureExecutionTime(printResults, wrappedVerifySignFalcon, "VerifySignature - Falcon 1024", nIterations)
+	falconStats := memory_usage(printResults)
 	falconStats["algorithm"] = "Falcon 1024"
 	falconStats["execution_time"] = falconTime
 	result = append(result, falconStats)
@@ -286,10 +251,10 @@ func VerifySignatureTest() []map[string]interface{} {
 	return result
 }
 
-func KeySignatureSizes() []map[string]interface{} {
+func KeySignatureSizes(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	hash := generateRandomHash()
+	//hash := generateRandomHash()
 	// ECDSA
 	key, _ := ecdsa.GenerateKeyECDSA()
 	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
