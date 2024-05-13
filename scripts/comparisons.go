@@ -1,8 +1,6 @@
 package scripts
 
 import (
-	"crypto/rand"
-	"crypto/sha256"
 	"crypto/test/scripts/dilithium"
 	"crypto/test/scripts/ecdsa"
 	"crypto/test/scripts/falcon"
@@ -19,7 +17,7 @@ const (
 	nSphincs     = 6
 	nDilithium   = 5
 	printResults = false
-	nIterations  = 20
+	nIterations  = 30
 )
 
 // CPU profiling
@@ -53,15 +51,15 @@ func memory_usage(print bool) map[string]interface{} {
 	}
 
 	memStats := map[string]interface{}{
-		"alloc_kb":       m.Alloc / 1024,
-		"total_alloc_kb": m.TotalAlloc / 1024,
-		"sys_kb":         m.Sys / 1024,
-		"num_gc":         m.NumGC,
+		"alloc_kb":       int(m.Alloc / 1024),
+		"total_alloc_kb": int(m.TotalAlloc / 1024),
+		"sys_kb":         int(m.Sys / 1024),
+		"num_gc":         int(m.NumGC),
 	}
 	return memStats
 }
 
-func measureExecutionTime(print bool, fn func(), name string, iterations int) string {
+func measureExecutionTime(print bool, fn func(), name string, iterations int) int {
 	totalTime := time.Duration(0)
 
 	for i := 0; i < iterations; i++ {
@@ -71,11 +69,13 @@ func measureExecutionTime(print bool, fn func(), name string, iterations int) st
 	}
 
 	averageTime := totalTime / time.Duration(iterations)
+	averageMicroseconds := int(averageTime / time.Microsecond)
+
 	if print {
-		fmt.Printf(" - %s execution time (average of %d iterations): %v\n", name, iterations, averageTime)
+		fmt.Printf(" - %s execution time (average of %d iterations): %d microseconds\n", name, iterations, averageMicroseconds)
 	}
 
-	return averageTime.String()
+	return averageMicroseconds
 }
 
 func sortByAlgorithm(result []map[string]interface{}) {
@@ -134,7 +134,6 @@ func GenerateKeyTest() []map[string]interface{} {
 func GenerateSignatureTest(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	//hash := generateRandomHash()
 	// ECDSA algorithm signature generation
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
@@ -191,7 +190,6 @@ func GenerateSignatureTest(hash []byte) []map[string]interface{} {
 func VerifySignatureTest(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	//hash := generateRandomHash()
 	// ECDSA algorithm signature verification
 	cpu_profiling()
 	key, _ := ecdsa.GenerateKeyECDSA()
@@ -254,7 +252,6 @@ func VerifySignatureTest(hash []byte) []map[string]interface{} {
 func KeySignatureSizes(hash []byte) []map[string]interface{} {
 	var result []map[string]interface{}
 
-	//hash := generateRandomHash()
 	// ECDSA
 	key, _ := ecdsa.GenerateKeyECDSA()
 	pubkey := ecdsa.FromECDSAPub(&key.PublicKey)
@@ -318,20 +315,6 @@ func getKeySignatureSizes(algorithm string, pkBytes int, skBytes int, signatureB
 		"signature":   signatureBytes,
 	}
 	return sizes
-}
-
-// Generate 32 random bytes
-func generateRandomHash() []byte {
-	randomBytes := make([]byte, 32)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		return nil
-	}
-
-	// Hash the random bytes using SHA-256
-	hash := sha256.Sum256(randomBytes)
-
-	return hash[:]
 }
 
 func Testing() {

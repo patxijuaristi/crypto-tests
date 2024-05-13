@@ -2,16 +2,19 @@ package main
 
 import (
 	"crypto/test/scripts"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-
-	"github.com/gorilla/mux"
+	"time"
 )
 
+var database = scripts.CreateDB()
+
 func main() {
-	// Create a new Gorilla Mux router
+	scripts.SimulateExecutions(database)
+	/*// Create a new Gorilla Mux router
 	router := mux.NewRouter()
 
 	// Define your API endpoints
@@ -23,7 +26,7 @@ func main() {
 
 	// Start the HTTP server
 	fmt.Println("Server listening on port 8080...")
-	http.ListenAndServe(":8080", router)
+	http.ListenAndServe(":8080", router)*/
 }
 
 // Handler functions for each endpoint
@@ -101,25 +104,42 @@ func perform_tests(hash []byte, functionName string) {
 	fmt.Println("Performing tests", functionName)
 
 	if functionName == "BlockValidator" {
+		currentTime := time.Now()
 		fmt.Println("** GENERATE SIGNATURE TEST **")
-		scripts.GenerateSignatureTest(hash)
+		resultGenerateSig := scripts.GenerateSignatureTest(hash)
 		fmt.Println("** VERIFY SIGNATURE TEST **")
-		scripts.VerifySignatureTest(hash)
+		resultVerifySig := scripts.VerifySignatureTest(hash)
+
+		hexHash := convertToHexadecimal(hash)
+		for i := 0; i < len(resultGenerateSig); i++ {
+			result := resultGenerateSig[i]
+			scripts.InsertDBHash(database, "GenerateSignature", currentTime, result, hexHash)
+		}
+		for i := 0; i < len(resultVerifySig); i++ {
+			result := resultVerifySig[i]
+			scripts.InsertDBHash(database, "GenerateSignature", currentTime, result, hexHash)
+		}
 	}
 
 	// This is how it should be
 	/*
 		switch functionName {
 		case "Signature":
-			scripts.GenerateSignatureTest(hash)
+			resultGenerateSig := scripts.GenerateSignatureTest(hash)
 		case "VerifySignature", "BlockValidator":
-			scripts.VerifySignatureTest(hash)
+			resultVerifySig := scripts.VerifySignatureTest(hash)
 		default: //Generate key
-			scripts.GenerateKeyTest()
+			resultGenerateKey := scripts.GenerateKeyTest()
 		}
 	*/
 }
 
 func test() {
 	scripts.Testing()
+}
+
+func convertToHexadecimal(hash []byte) string {
+	hexString := "0x" + hex.EncodeToString(hash[:])
+
+	return hexString
 }
