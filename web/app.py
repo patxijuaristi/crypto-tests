@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, render_template
 import requests
 
 app = Flask(__name__)
@@ -90,13 +90,13 @@ def signature_key_sizes():
 def set_bg_color(data):
     for item in data:
         if 'Dilithium' in item['algorithm']:
-            item['bg_color'] = '#a6d5a6'
+            item['bg_color'] = '#fcffc3'
         elif 'SPHINCS+' in item['algorithm']:
             item['bg_color'] = '#aed4e9'
         elif 'Falcon' in item['algorithm']:
-            item['bg_color'] = '#fcffc3'
+            item['bg_color'] = '#dddddd'
         else:
-            item['bg_color'] = '#ffc3c3'
+            item['bg_color'] = '#ffd3fc'
     return data
 
 if __name__ == '__main__':
