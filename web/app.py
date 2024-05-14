@@ -10,9 +10,21 @@ def index():
 
 @app.route('/real-time')
 def real_time():
-    return render_template('real_time.html')
+    data = {
+        'page_title' : '📊 Real time testing data',
+        'grafana_url' : 'http://localhost:3000/public-dashboards/d9399f5b4d704749a1eb0fa30d668fe4'
+    }
+    return render_template('grafana.html', data=data)
 
-@app.route('/key-generation')
+@app.route('/data-key-generation')
+def data_key_generation():
+    data = {
+        'page_title' : '🔑 Key generation historical data',
+        'grafana_url' : 'http://localhost:3000/public-dashboards/f39b8f60f2f64c1eaaa38985e343fda4'
+    }
+    return render_template('grafana.html', data=data)
+
+@app.route('/test-key-generation')
 def generate_key():
     # Make a GET request to the Go endpoint
     response = requests.get('http://localhost:8080/generateKey')
@@ -32,7 +44,7 @@ def generate_key():
     else:
         return "Failed to fetch data from the Go endpoint", 500
 
-@app.route('/signature-generation')
+@app.route('/test-signature-generation')
 def generate_signature():
     # Make a GET request to the Go endpoint
     response = requests.get('http://localhost:8080/generateSignature')
@@ -52,7 +64,7 @@ def generate_signature():
     else:
         return "Failed to fetch data from the Go endpoint", 500
 
-@app.route('/signature-verification')
+@app.route('/test-signature-verification')
 def signature_verification():
     # Make a GET request to the Go endpoint
     response = requests.get('http://localhost:8080/verifySignature')
@@ -74,15 +86,11 @@ def signature_verification():
 
 @app.route('/signature-key-sizes')
 def signature_key_sizes():
-    test_result = database.get_all_sizes_data()
-    test_result = set_bg_color(test_result)
-    
     data = {
         'page_title' : '📊 Key and Signature sizes',
-        'test_result' : test_result
+        'grafana_url' : 'http://localhost:3000/public-dashboards/25123e0d5ad3464f88cd70ebf5bae07d'
     }
-    # Render the template with JSON data
-    return render_template('sizes_results.html', data=data)
+    return render_template('grafana.html', data=data)
 
 def set_bg_color(data):
     for item in data:

@@ -22,15 +22,22 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                    <li id="sizes-nav-link" class="nav-item"><a class="nav-link" href="/real-time">Real Time Dashboard</a></li>
+                    <li id="real-time-nav-link" class="nav-item"><a class="nav-link" href="/real-time">Real Time Dashboard</a></li>
                     <li id="sizes-nav-link" class="nav-item"><a class="nav-link" href="/signature-key-sizes">Key/Signature sizes</a></li>
-                    <!-- Modified submenu with Test -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownTest" role="button" data-bs-toggle="dropdown" aria-expanded="false">Instant Test</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownTest">
-                            <li><a class="dropdown-item" href="/key-generation">Key Generation</a></li>
-                            <li><a class="dropdown-item" href="/signature-generation">Signature Generation</a></li>
-                            <li><a class="dropdown-item" href="/signature-verification">Signature Verification</a></li>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownHistorical" role="button" data-bs-toggle="dropdown" aria-expanded="false">Historical Data</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownHistorical">
+                            <li><a class="dropdown-item" href="/data-key-generation">Key Generation</a></li>
+                            <li><a class="dropdown-item" href="/data-signature-generation">Signature Generation</a></li>
+                            <li><a class="dropdown-item" href="/data-signature-verification">Signature Verification</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownInstant" role="button" data-bs-toggle="dropdown" aria-expanded="false">Instant Test</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownInstant">
+                            <li><a class="dropdown-item" href="/test-key-generation">Key Generation</a></li>
+                            <li><a class="dropdown-item" href="/test-signature-generation">Signature Generation</a></li>
+                            <li><a class="dropdown-item" href="/test-signature-verification">Signature Verification</a></li>
                         </ul>
                     </li>
                 </ul>
