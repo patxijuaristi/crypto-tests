@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import requests
+import database
 
 app = Flask(__name__)
 
@@ -69,23 +70,15 @@ def signature_verification():
 
 @app.route('/signature-key-sizes')
 def signature_key_sizes():
-    # Make a GET request to the Go endpoint
-    response = requests.get('http://localhost:8080/keySignatureSizes')
+    test_result = database.get_all_sizes_data()
+    test_result = set_bg_color(test_result)
     
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Parse the JSON response
-        test_result = response.json()
-        test_result = set_bg_color(test_result)
-        
-        data = {
-            'page_title' : '📊 Key and Signature sizes',
-            'test_result' : test_result
-        }
-        # Render the template with JSON data
-        return render_template('sizes_results.html', data=data)
-    else:
-        return "Failed to fetch data from the Go endpoint", 500
+    data = {
+        'page_title' : '📊 Key and Signature sizes',
+        'test_result' : test_result
+    }
+    # Render the template with JSON data
+    return render_template('sizes_results.html', data=data)
 
 def set_bg_color(data):
     for item in data:

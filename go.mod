@@ -5,13 +5,13 @@ go 1.22.1
 require (
 	github.com/ethereum/go-ethereum v1.14.0
 	github.com/google/gofuzz v1.2.0
+	github.com/gorilla/mux v1.8.1
+	github.com/mattn/go-sqlite3 v1.14.22
 	golang.org/x/crypto v0.22.0
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
 	golang.org/x/sys v0.20.0
 	golang.org/x/tools v0.20.0
 )
-
-require github.com/mattn/go-sqlite3 v1.14.22 // indirect
 
 require (
 	github.com/cloudflare/circl v1.3.8

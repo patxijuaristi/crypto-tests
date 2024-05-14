@@ -17,7 +17,6 @@ const (
 	nSphincs     = 6
 	nDilithium   = 5
 	printResults = false
-	nIterations  = 30
 )
 
 // CPU profiling
@@ -84,7 +83,7 @@ func sortByAlgorithm(result []map[string]interface{}) {
 	})
 }
 
-func GenerateKeyTest() []map[string]interface{} {
+func GenerateKeyTest(nIterations int) []map[string]interface{} {
 	var result []map[string]interface{}
 
 	// ECDSA algorithm key generation
@@ -131,7 +130,7 @@ func GenerateKeyTest() []map[string]interface{} {
 	return result
 }
 
-func GenerateSignatureTest(hash []byte) []map[string]interface{} {
+func GenerateSignatureTest(hash []byte, nIterations int) []map[string]interface{} {
 	var result []map[string]interface{}
 
 	// ECDSA algorithm signature generation
@@ -187,7 +186,7 @@ func GenerateSignatureTest(hash []byte) []map[string]interface{} {
 	return result
 }
 
-func VerifySignatureTest(hash []byte) []map[string]interface{} {
+func VerifySignatureTest(hash []byte, nIterations int) []map[string]interface{} {
 	var result []map[string]interface{}
 
 	// ECDSA algorithm signature verification
@@ -258,7 +257,7 @@ func KeySignatureSizes(hash []byte) []map[string]interface{} {
 	pubkey = pubkey[:len(pubkey)-1] // remove recovery id
 	signature, _ := ecdsa.SignECDSA(hash, key)
 	signature = signature[:len(signature)-1] // remove recovery id
-	ecdsaStats := getKeySignatureSizes("ECDSA", len(ecdsa.FromECDSA(key)), len(pubkey), len(signature))
+	ecdsaStats := getKeySignatureSizes("ECDSA", len(pubkey), len(ecdsa.FromECDSA(key)), len(signature), printResults)
 	ecdsaStats["algorithm"] = "ECDSA"
 	result = append(result, ecdsaStats)
 
@@ -269,7 +268,7 @@ func KeySignatureSizes(hash []byte) []map[string]interface{} {
 		skBytes, pkBytes := sphincs.KeysToBytes(sk, pk)
 		signature2 := sphincs.SignSPHINCS(hash, sk)
 		sigBytes := sphincs.SignatureToBytes(signature2)
-		sphincsStats := getKeySignatureSizes(mode, len(skBytes), len(pkBytes), len(sigBytes))
+		sphincsStats := getKeySignatureSizes(mode, len(pkBytes), len(skBytes), len(sigBytes), printResults)
 		sphincsStats["algorithm"] = mode
 		result = append(result, sphincsStats)
 		sphincs.ChangeSphincsMode()
@@ -280,7 +279,7 @@ func KeySignatureSizes(hash []byte) []map[string]interface{} {
 		mode := dilithium.GetCurrentDilithiumMode()
 		pk, sk, _ := dilithium.GenerateKeyDilithium()
 		signature3 := dilithium.SignDilithium(sk, hash)
-		dilithiumStats := getKeySignatureSizes(mode, len(sk.Bytes()), len(pk.Bytes()), len(signature3))
+		dilithiumStats := getKeySignatureSizes(mode, len(pk.Bytes()), len(sk.Bytes()), len(signature3), printResults)
 		dilithiumStats["algorithm"] = mode
 		result = append(result, dilithiumStats)
 		dilithium.ChangeDilithiumMode()
@@ -291,10 +290,10 @@ func KeySignatureSizes(hash []byte) []map[string]interface{} {
 	pk, sk, _ := falcon.GenerateKey(seed)
 	signatureFalcon, _ := sk.SignCompressed(hash)
 	ctSignatureFalcon, _ := signatureFalcon.ConvertToCT()
-	falconStats := getKeySignatureSizes("Falcon 1024", len(sk), len(pk), len(signature))
+	falconStats := getKeySignatureSizes("Falcon 1024", len(pk), len(sk), len(signature), printResults)
 	falconStats["algorithm"] = "Falcon 1024"
 	result = append(result, falconStats)
-	falconCTStats := getKeySignatureSizes("Falcon 1024 (CT-format)", len(sk), len(pk), len(ctSignatureFalcon))
+	falconCTStats := getKeySignatureSizes("Falcon 1024 (CT-format)", len(pk), len(sk), len(ctSignatureFalcon), printResults)
 	falconCTStats["algorithm"] = "Falcon 1024 (CT-format)"
 	result = append(result, falconCTStats)
 
@@ -302,12 +301,14 @@ func KeySignatureSizes(hash []byte) []map[string]interface{} {
 	return result
 }
 
-func getKeySignatureSizes(algorithm string, pkBytes int, skBytes int, signatureBytes int) map[string]interface{} {
-	fmt.Printf("\n** %s", algorithm)
-	fmt.Printf("\n - Private key --> %d", skBytes)
-	fmt.Printf("\n - Public key ---> %d", pkBytes)
-	fmt.Printf("\n - Signature ----> %d", signatureBytes)
-	fmt.Printf("\n")
+func getKeySignatureSizes(algorithm string, pkBytes int, skBytes int, signatureBytes int, print bool) map[string]interface{} {
+	if print {
+		fmt.Printf("\n** %s", algorithm)
+		fmt.Printf("\n - Private key --> %d", skBytes)
+		fmt.Printf("\n - Public key ---> %d", pkBytes)
+		fmt.Printf("\n - Signature ----> %d", signatureBytes)
+		fmt.Printf("\n")
+	}
 
 	sizes := map[string]interface{}{
 		"private_key": skBytes,

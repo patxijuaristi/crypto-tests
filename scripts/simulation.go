@@ -11,6 +11,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const nIterations = 30
+
+func GenerateSizesDB(database *sql.DB) {
+	sizesData := KeySignatureSizes(GenerateRandomHash())
+	for i := 0; i < len(sizesData); i++ {
+		result := sizesData[i]
+		InsertSizesDB(database, result)
+	}
+}
+
 func SimulateExecutions(database *sql.DB) {
 	currentTime := time.Now()
 	for i := 0; i < 50; i++ {
@@ -24,7 +34,7 @@ func SimulateExecutions(database *sql.DB) {
 }
 
 func simulateGenerateKey(database *sql.DB, currentTime time.Time) {
-	keyTestData := GenerateKeyTest()
+	keyTestData := GenerateKeyTest(nIterations)
 	for i := 0; i < len(keyTestData); i++ {
 		result := keyTestData[i]
 		InsertDB(database, "GenerateKey", currentTime, result)
@@ -32,10 +42,10 @@ func simulateGenerateKey(database *sql.DB, currentTime time.Time) {
 }
 
 func simulateGenerateSignature(database *sql.DB, currentTime time.Time) {
-	hash := generateRandomHash()
+	hash := GenerateRandomHash()
 	hexHash := convertToHexadecimal(hash)
 
-	signatureTestData := GenerateSignatureTest(hash)
+	signatureTestData := GenerateSignatureTest(hash, nIterations)
 	for i := 0; i < len(signatureTestData); i++ {
 		result := signatureTestData[i]
 		InsertDBHash(database, "GenerateSignature", currentTime, result, hexHash)
@@ -43,10 +53,10 @@ func simulateGenerateSignature(database *sql.DB, currentTime time.Time) {
 }
 
 func simulateVerifySignature(database *sql.DB, currentTime time.Time) {
-	hash := generateRandomHash()
+	hash := GenerateRandomHash()
 	hexHash := convertToHexadecimal(hash)
 
-	verifySignatureTestData := VerifySignatureTest(hash)
+	verifySignatureTestData := VerifySignatureTest(hash, nIterations)
 	for i := 0; i < len(verifySignatureTestData); i++ {
 		result := verifySignatureTestData[i]
 		InsertDBHash(database, "VerifySignature", currentTime, result, hexHash)
@@ -54,7 +64,7 @@ func simulateVerifySignature(database *sql.DB, currentTime time.Time) {
 }
 
 // Generate 32 random bytes
-func generateRandomHash() []byte {
+func GenerateRandomHash() []byte {
 	randomBytes := make([]byte, 32)
 	_, err := rand.Read(randomBytes)
 	if err != nil {
