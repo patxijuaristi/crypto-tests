@@ -8,6 +8,10 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/real-time')
+def real_time():
+    return render_template('real_time.html')
+
 @app.route('/key-generation')
 def generate_key():
     # Make a GET request to the Go endpoint

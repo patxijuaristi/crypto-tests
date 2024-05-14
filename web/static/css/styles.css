@@ -11782,3 +11782,12 @@ header.masthead .masthead-heading {
 .home-container .btn-info{
   border: 2px solid white;
 }
+.real-time-dashboard{
+  width: 100%;
+  margin-top: 59px;
+}
+
+.real-time-dashboard iframe{
+  width: 100%;
+  min-height: 800px;
+}
