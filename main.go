@@ -13,7 +13,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var database = scripts.CreateDB()
+// Define a struct to hold the request data
+type RequestData struct {
+	Hash         []byte `json:"hash"`
+	FunctionName string `json:"functionName"`
+}
+
+var (
+	requests_channel chan RequestData     // Channel to receive requests
+	database         = scripts.CreateDB() // Sqlite database
+)
 
 const (
 	nIterationsWeb = 5
@@ -31,6 +40,10 @@ func main() {
 	mode := os.Args[1]
 
 	if mode == "1" {
+		// Initialize the requests channel
+		requests_channel = make(chan RequestData)
+		// Start a goroutine to handle requests
+		go handleRequests()
 		// Execute the code for API endpoints
 		router := mux.NewRouter()
 		router.HandleFunc("/generateKey", generateKeyHandler).Methods("GET")
@@ -88,6 +101,17 @@ func returnData(w http.ResponseWriter, r *http.Request, data []map[string]interf
 	w.Write(jsonResponse)
 }
 
+// Function to handle incoming requests
+func handleRequests() {
+	for {
+		select {
+		case requestData := <-requests_channel:
+			// Process the request
+			perform_tests(requestData.Hash, requestData.FunctionName)
+		}
+	}
+}
+
 // Endpoint that receives the new block validations from the Ethereum network
 // and performs the tests with the corresponding block hash
 func testApi(w http.ResponseWriter, r *http.Request) {
@@ -99,10 +123,7 @@ func testApi(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Define a struct to unmarshal the request body into
-	var requestData struct {
-		Hash         []byte `json:"hash"`
-		FunctionName string `json:"functionName"`
-	}
+	var requestData RequestData
 
 	// Unmarshal request body into the struct
 	if err := json.Unmarshal(body, &requestData); err != nil {
@@ -110,10 +131,8 @@ func testApi(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	hash := requestData.Hash
-	functionName := requestData.FunctionName
-
-	perform_tests(hash, functionName)
+	// Send the request to the queue
+	requests_channel <- requestData
 }
 
 // Perform the tests with the block hash. Generate signature and verify signature are tested.
@@ -124,10 +143,17 @@ func perform_tests(hash []byte, functionName string) {
 
 	if functionName == "BlockValidator" {
 		currentTime := time.Now()
+		fmt.Println("** GENERATE KEY TEST ", currentTime)
+		resultGenerateKey := scripts.GenerateKeyTest(nIterationsApi)
 		fmt.Println("** GENERATE SIGNATURE TEST ", currentTime)
 		resultGenerateSig := scripts.GenerateSignatureTest(hash, nIterationsApi)
 		fmt.Println("** VERIFY SIGNATURE TEST ", currentTime)
 		resultVerifySig := scripts.VerifySignatureTest(hash, nIterationsApi)
+
+		for i := 0; i < len(resultGenerateKey); i++ {
+			result := resultGenerateKey[i]
+			scripts.InsertDB(database, "GenerateKey", currentTime, result)
+		}
 
 		hexHash := convertToHexadecimal(hash)
 		for i := 0; i < len(resultGenerateSig); i++ {
