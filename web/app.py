@@ -24,6 +24,22 @@ def data_key_generation():
     }
     return render_template('grafana.html', data=data)
 
+@app.route('/data-signature-generation')
+def data_signature_generation():
+    data = {
+        'page_title' : '✍ Signature generation historical data',
+        'grafana_url' : 'http://localhost:3000/public-dashboards/35b63d286a80431c93cc1447aad228b8'
+    }
+    return render_template('grafana.html', data=data)
+
+@app.route('/data-signature-verification')
+def data_signature_verification():
+    data = {
+        'page_title' : '📝 Signature verification historical data',
+        'grafana_url' : 'http://localhost:3000/public-dashboards/582afce378cc49a8b8912031d0fe5d1f'
+    }
+    return render_template('grafana.html', data=data)
+
 @app.route('/test-key-generation')
 def generate_key():
     # Make a GET request to the Go endpoint
