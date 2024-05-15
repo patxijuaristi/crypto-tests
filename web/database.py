@@ -20,6 +20,16 @@ def get_all_sizes_data():
     
     return data_list
 
+def get_all_test_data():
+    conn = sqlite3.connect('../crypto_tests.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM crypto_tests_data LIMIT 20;")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    for r in rows:
+        print(r)
+
 def delete_all_data():
     conn = sqlite3.connect('../crypto_tests.db')
     cursor = conn.cursor()

@@ -22,12 +22,135 @@
   "links": [],
   "panels": [
     {
-      "collapsed": true,
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 18,
+      "panels": [],
+      "title": "⚙️⛓️ Last performed tests",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "fdlmpsi4pfxfka"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "shades"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "color-background"
+            },
+            "inspect": false
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time ⏱️"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Test ⚙️"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 18,
+        "x": 3,
+        "y": 1
+      },
+      "hideTimeOverride": false,
+      "id": 17,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "queryText": "SELECT DISTINCT\n    datetime AS \"Time ⏱️\",\n    test_name AS \"Test ⚙️\",\n    COALESCE(hash, '-') AS \"Block hash ⛓️\"\nFROM crypto_tests_data\nLIMIT 100;\n",
+          "queryType": "table",
+          "rawQueryText": "SELECT DISTINCT\n    datetime AS \"Time ⏱️\",\n    test_name AS \"Test ⚙️\",\n    COALESCE(hash, '-') AS \"Block hash ⛓️\"\nFROM crypto_tests_data\nLIMIT 100;\n",
+          "refId": "A",
+          "timeColumns": []
+        }
+      ],
+      "title": "⚙️⛓️ Last tests performed ",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "time",
+                "targetField": "Time ⏱️"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 11
       },
       "id": 5,
       "panels": [
@@ -81,8 +204,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -94,7 +216,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 1
+            "y": 12
           },
           "hideTimeOverride": false,
           "id": 1,
@@ -191,8 +313,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -204,7 +325,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 1
+            "y": 12
           },
           "hideTimeOverride": false,
           "id": 2,
@@ -301,8 +422,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -314,7 +434,7 @@
             "h": 7,
             "w": 12,
             "x": 6,
-            "y": 9
+            "y": 20
           },
           "hideTimeOverride": false,
           "id": 3,
@@ -371,7 +491,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 1
+        "y": 12
       },
       "id": 4,
       "panels": [
@@ -425,8 +545,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -535,8 +654,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -645,8 +763,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -710,682 +827,680 @@
       "type": "row"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 13
       },
       "id": 10,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Sys (Kb)",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 3,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 3
+          },
+          "hideTimeOverride": false,
+          "id": 9,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "🔑 Key Generation",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Sys (Kb)",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 2,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 3
+          },
+          "hideTimeOverride": false,
+          "id": 11,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "✍ Signature Generation",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Sys (Kb)",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 2,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 6,
+            "y": 11
+          },
+          "hideTimeOverride": false,
+          "id": 12,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "📝 Signature Verification",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        }
+      ],
       "title": "⚙️ Sys (Kb)",
       "type": "row"
     },
     {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Sys (Kb)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 3,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 3
-      },
-      "hideTimeOverride": false,
-      "id": 9,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "🔑 Key Generation",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Sys (Kb)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 3
-      },
-      "hideTimeOverride": false,
-      "id": 11,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "✍ Signature Generation",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Sys (Kb)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 6,
-        "y": 11
-      },
-      "hideTimeOverride": false,
-      "id": 12,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN sys ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN sys ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN sys ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN sys ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "📝 Signature Verification",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 18
+        "y": 14
       },
       "id": 14,
+      "panels": [
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Num GC",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 3,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "hideTimeOverride": false,
+          "id": 13,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "🔑 Key Generation",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Num GC",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 2,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 4
+          },
+          "hideTimeOverride": false,
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "✍ Signature Generation",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "frser-sqlite-datasource",
+            "uid": "fdlmpsi4pfxfka"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisGridShow": true,
+                "axisLabel": "Num GC",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 2,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 12,
+            "x": 5,
+            "y": 12
+          },
+          "hideTimeOverride": false,
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "10.4.2",
+          "targets": [
+            {
+              "datasource": {
+                "type": "frser-sqlite-datasource",
+                "uid": "fdlmpsi4pfxfka"
+              },
+              "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
+              "queryType": "table",
+              "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
+              "refId": "A",
+              "timeColumns": []
+            }
+          ],
+          "title": "📝 Signature Verification",
+          "transformations": [
+            {
+              "id": "convertFieldType",
+              "options": {
+                "conversions": [
+                  {
+                    "destinationType": "time",
+                    "targetField": "datetime"
+                  }
+                ],
+                "fields": {}
+              }
+            }
+          ],
+          "type": "timeseries"
+        }
+      ],
       "title": "🔧 Num GC",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Num GC",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 3,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 19
-      },
-      "hideTimeOverride": false,
-      "id": 13,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateKey'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "🔑 Key Generation",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Duration (ms)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 19
-      },
-      "hideTimeOverride": false,
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'GenerateSignature'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "✍ Signature Generation",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "frser-sqlite-datasource",
-        "uid": "fdlmpsi4pfxfka"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisGridShow": true,
-            "axisLabel": "Alloc (Kb)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 2,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "fieldMinMax": false,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 5,
-        "y": 27
-      },
-      "hideTimeOverride": false,
-      "id": 15,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "10.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "frser-sqlite-datasource",
-            "uid": "fdlmpsi4pfxfka"
-          },
-          "queryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
-          "queryType": "table",
-          "rawQueryText": "SELECT \n    datetime,\n    AVG(CASE WHEN algorithm_name LIKE 'Dilithium%' THEN num_gc ELSE NULL END) AS Dilithium,\n    AVG(CASE WHEN algorithm_name = 'ECDSA' THEN num_gc ELSE NULL END) AS ECDSA,\n    AVG(CASE WHEN algorithm_name LIKE 'Falcon%' THEN num_gc ELSE NULL END) AS Falcon,\n    AVG(CASE WHEN algorithm_name LIKE 'SPHINCS+%' THEN num_gc ELSE NULL END) AS Sphincs\nFROM crypto_tests_data\nWHERE test_name = 'VerifySignature'\nGROUP BY datetime",
-          "refId": "A",
-          "timeColumns": []
-        }
-      ],
-      "title": "📝 Signature Verification",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "time",
-                "targetField": "datetime"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "timeseries"
     }
   ],
   "refresh": "",
@@ -1395,13 +1510,13 @@
     "list": []
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Crypto Tests",
+  "title": "🔐 Real time cryptographics tests",
   "uid": "fdlmvwxj0g6bkf",
-  "version": 18,
+  "version": 37,
   "weekStart": ""
 }
