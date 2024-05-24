@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/test/scripts"
 	"encoding/hex"
 	"encoding/json"
@@ -22,6 +23,7 @@ type RequestData struct {
 var (
 	requests_channel chan RequestData     // Channel to receive requests
 	database         = scripts.CreateDB() // Sqlite database
+	lastHash         []byte               // variable to avoid duplications
 )
 
 const (
@@ -139,6 +141,11 @@ func testApi(w http.ResponseWriter, r *http.Request) {
 // Tests are only performed when a block is validated. The API call is done when a signature is done and verified too,
 // but we don't make the tests in these cases to avoid system overloading.
 func perform_tests(hash []byte, functionName string) {
+	// Check if the hash is duplicated
+	if bytes.Equal(lastHash, hash) {
+		fmt.Println("Same hash")
+		return
+	}
 	fmt.Println("Performing tests", functionName)
 
 	if functionName == "BlockValidator" {

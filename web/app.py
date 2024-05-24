@@ -1,8 +1,9 @@
 from flask import Flask, render_template
 import requests
-import database
+from cpuinfo import get_cpu_info
 
 app = Flask(__name__)
+cpu_info = get_cpu_info()
 
 @app.route('/')
 def index():
@@ -53,7 +54,8 @@ def generate_key():
         
         data = {
             'page_title' : '🔑 Key generation',
-            'test_result' : test_result
+            'test_result' : test_result,
+            'cpu_info': cpu_info
         }
         # Render the template with JSON data
         return render_template('time_memory_results.html', data=data)
@@ -73,7 +75,8 @@ def generate_signature():
         
         data = {
             'page_title' : '✍ Signature generation',
-            'test_result' : test_result
+            'test_result' : test_result,
+            'cpu_info': cpu_info
         }
         # Render the template with JSON data
         return render_template('time_memory_results.html', data=data)
@@ -93,7 +96,8 @@ def signature_verification():
         
         data = {
             'page_title' : '📝 Signature verification',
-            'test_result' : test_result
+            'test_result' : test_result,
+            'cpu_info': cpu_info
         }
         # Render the template with JSON data
         return render_template('time_memory_results.html', data=data)

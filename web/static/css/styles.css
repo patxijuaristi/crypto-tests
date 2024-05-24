@@ -11791,3 +11791,13 @@ header.masthead .masthead-heading {
   width: 100%;
   min-height: 800px;
 }
+
+.cpu-info{
+  font-style: italic;
+}
+
+.navbar > .container{
+  @media only screen and (min-width: 991px){
+    margin-right: 8%;
+  }
+}

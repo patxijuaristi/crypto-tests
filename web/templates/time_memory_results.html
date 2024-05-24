@@ -5,8 +5,16 @@
     <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
     {% include 'loading_spinner.html' %}
     <div id="page-content" class="container p-5">
-        <div class="row">
-            <p><span class="table-title">{{data.page_title}}</span> <span>Average data for 100 iterations</span></p>
+        <div class="row pt-2">
+            <p>
+                <span class="table-title">{{data.page_title}}</span> 
+                <span>Average data for 100 iterations</span>
+            </p>
+            <p>
+                <strong>🖥️ Tests executed in: </strong
+                <span class="cpu-info">{{data.cpu_info.brand_raw}}</span> 
+                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#cpuInfoModal">Details</button>
+            </p>
         </div>
         <div class="row justify-content-center">
             <div class="table-responsive">
@@ -39,4 +47,30 @@
     </div>
 </section>
 </div>
+
+<div class="modal fade" id="cpuInfoModal" tabindex="-1" aria-labelledby="cpuInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cpuInfoModalLabel">Detailed CPU Information</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li><strong>Architecture:</strong> {{ data.cpu_info.arch }} ({{ data.cpu_info.bits }}-bit)</li>
+            <li><strong>Model:</strong> {{ data.cpu_info.brand_raw }}</li>
+            <li><strong>Vendor:</strong> {{ data.cpu_info.vendor_id_raw }}</li>
+            <li><strong>Cores:</strong> {{ data.cpu_info.count }}</li>
+            <li><strong>Advertised Speed:</strong> {{ data.cpu_info.hz_advertised_friendly }}</li>
+            <li><strong>Actual Speed:</strong> {{ data.cpu_info.hz_actual_friendly }}</li>
+            <li><strong>L2 Cache:</strong> {{ data.cpu_info.l2_cache_size }} bytes</li>
+            <li><strong>L3 Cache:</strong> {{ data.cpu_info.l3_cache_size }} bytes</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
