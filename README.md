@@ -68,15 +68,15 @@ pip install -r .\requirements.txt
 
 Next, we need to install Grafana on our system, and set the data source from which it will read the information to display the results. This will be the path to the `crypto_tests.db` file which is automatically created on the first run of the main program.
 
-![Grafana Data Sources](https://github.com/patxijuaristi/crypto-tests/images/grafana-data-source.png)
+![Grafana Data Sources](https://github.com/patxijuaristi/crypto-tests/blob/master/images/grafana-data-source.png)
 
 Then we need to import all the dashboards that are exported in JSON format in the */grafana* folder. The result should be the next one:
 
-![Grafana Dashboards](https://github.com/patxijuaristi/crypto-tests/images/grafana-dashboards.png)
+![Grafana Dashboards](https://github.com/patxijuaristi/crypto-tests/blob/master/images/grafana-dashboards.png)
 
 Then to visualize them in the local web pages, we need to make them public and change the URL-s. We have to go one by one in the dashboards, and get the public address, copy it and set it in the `app.py` file, in the corresponding view.
 
-![Grafana Share](https://github.com/patxijuaristi/crypto-tests/images/grafana-share.png)
+![Grafana Share](https://github.com/patxijuaristi/crypto-tests/blob/master/images/grafana-share.png)
 
 ```
 'grafana_url' : 'http://localhost:3000/public-dashboards/xxxxxxxxxxxxxxxxxxxxxxxxx'
